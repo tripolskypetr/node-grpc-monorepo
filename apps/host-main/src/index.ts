@@ -1,8 +1,25 @@
 import { grpc } from "@modules/remote-grpc";
 import micro from "micro";
 import http from "http";
+import Router from "router";
+import finalhandler from "finalhandler";
 
 import serveHandler from "serve-handler";
+
+const router = Router();
+
+router.get("/", (req, res) => {
+  micro.send(res, 200, "Hello world111");
+});
+
+router.get("/api/v1/foo", async (req, res) => {
+  const output = await grpc.fooClientService.Execute({ data: "foo" });
+  return micro.send(res, 200, output);
+});
+
+router.get("/*", (req, res) => serveHandler(req, res, {
+  public: "./public",
+}));
 
 const server = new http.Server(
   micro.serve(async (req, res) => {
@@ -11,14 +28,11 @@ const server = new http.Server(
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
 
-    if (req.url?.startsWith("/api/v1/foo")) {
-        const output = await grpc.fooClientService.Execute({ data: "foo" });
-        return micro.send(res, 200, output);
-    }
-
-    return serveHandler(req, res, {
-        public: './public',
-    });
+    return router(
+      req,
+      res,
+      finalhandler(req, res),
+    );
   })
 );
 
