@@ -1,0 +1,29 @@
+{
+  "name": "@modules/remote-grpc",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "type": "module",
+  "module": "build/index.mjs",
+  "source": "src/index.ts",
+  "types": "./types.d.ts",
+  "exports": {
+    "types": "./types.d.ts",
+    "import": "./build/index.mjs",
+    "default": "./build/index.mjs"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "5.0.0"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "1.12.2",
+    "@grpc/proto-loader": "0.7.13",
+    "@types/lodash": "4.17.13",
+    "di-kit": "1.0.11",
+    "pinolog": "1.0.0"
+  }
+}

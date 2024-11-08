@@ -1,0 +1,19 @@
+{
+  "name": "@apps/host-main",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node ./build/index.mjs",
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@modules/remote-grpc": "*",
+    "@modules/remote-lib": "*"
+  },
+  "peerDependencies": {
+    "typescript": "5.0.0"
+  }
+}
