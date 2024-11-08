@@ -12,7 +12,7 @@ const appList = [
         max_restarts: "5",
         cron_restart: '0 0 * * *',
         max_memory_restart: '1250M',
-        script: "./apps/host-main/build/index.cjs",
+        script: "./apps/host-main/build/index.mjs",
         env: readConfig("./.env"),
     },
 ];
@@ -55,7 +55,7 @@ const serviceList = [
 
 module.exports = {
     apps: [
-        //...appList,
+        ...appList,
         ...serviceList,
     ],
 };

@@ -3,15 +3,20 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node ./build/index.mjs",
+    "start": "npm run build && node ./build/index.mjs",
+    "start:debug": "npm run build && node --inspect-brk ./build/index.mjs",
     "build": "rollup -c"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/microrouter": "3.1.6",
+    "@types/serve-handler": "6.1.4"
   },
   "dependencies": {
     "@modules/remote-grpc": "*",
-    "@modules/remote-lib": "*"
+    "@modules/remote-lib": "*",
+    "micro": "10.0.1",
+    "microrouter": "3.1.3",
+    "serve-handler": "6.1.6"
   },
   "peerDependencies": {
     "typescript": "5.0.0"

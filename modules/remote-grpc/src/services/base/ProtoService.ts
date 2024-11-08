@@ -9,7 +9,7 @@ import { CC_GRPC_MAP, CC_GRPT_PROTO_PATH } from "../../config/params";
 
 const readProto = (name: string) => {
   const absolutePath = resolve(join(CC_GRPT_PROTO_PATH, `${name}.proto`));
-  console.log(`Loadig proto ${absolutePath}`);
+  console.log(`Using proto ${absolutePath}`);
   const packageDefinition = protoLoader.loadSync(
     absolutePath
   );

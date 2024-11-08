@@ -2,6 +2,9 @@
     "name": "bun-event-bus",
     "private": true,
     "scripts": {
+        "start": "npm run pm2:stop && npm run build && npm run pm2:start",
+        "pm2:start": "pm2 start ./config/ecosystem.config.js",
+        "pm2:stop": "pm2 kill",
         "build": "npm run build:modules && npm run build:services && npm run build:apps",
         "build:modules": "dotenv -e .env -- lerna run build --scope=@modules/*",
         "build:apps": "dotenv -e .env -- lerna run build --scope=@apps/*",

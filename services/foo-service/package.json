@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node ./build/index.mjs",
+    "start": "npm run build && node ./build/index.mjs",
+    "start:debug": "npm run build && node --inspect-brk ./build/index.mjs",
     "build": "rollup -c"
   },
   "devDependencies": {
@@ -14,6 +15,6 @@
     "@modules/remote-lib": "*"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "5.0.0"
   }
 }
