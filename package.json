@@ -24,8 +24,8 @@
     "dependencies": {
         "@prettier/sync": "0.5.2",
         "@types/glob": "8.1.0",
-        "glob": "11.0.0",
-        "dotenv": "16.4.5"
+        "dotenv": "16.4.5",
+        "glob": "11.0.0"
     },
     "devDependencies": {
         "rollup": "3.29.4",
@@ -34,6 +34,7 @@
         "rollup-plugin-peer-deps-external": "2.2.4",
         "@rollup/plugin-typescript": "11.1.6",
         "tslib": "2.7.0",
-        "dotenv-cli": "7.4.2"
+        "dotenv-cli": "7.4.2",
+        "translit-rus-eng": "1.0.8"
     }
 }
