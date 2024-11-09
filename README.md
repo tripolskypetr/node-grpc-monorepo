@@ -14,7 +14,7 @@
 
 ![monorepo](./assets/monorepo-polyrepo.svg)
 
-С появлением [монорепозиториев](https://en.wikipedia.org/wiki/Monorepo) проблемы можно избежать, грамотно организовав структура проекта на старте. Данный проект представляет собой микросервисную архитектуру, где host (папка `apps`) приложения взаимодействуют с микросервисами (папка `services`) через шину событий [GRPC](https://en.wikipedia.org/wiki/GRPC), повторно используя общий код луковичной композиции сервисов со слоем логгирования и базы данных из общего кода (папка `modules`)
+С появлением [монорепозиториев](https://en.wikipedia.org/wiki/Monorepo) проблемы можно избежать, грамотно организовав структура проекта на старте. Данный проект представляет собой микросервисную архитектуру, где host (папка `apps`) приложения взаимодействуют с микросервисами (папка `services`) через шину событий [GRPC](https://en.wikipedia.org/wiki/GRPC), повторно используя общий код луковичной композиции сервисов со слоем логирования и базы данных из общего кода (папка `modules`)
 
 ## Упрощаем взаимодействие микросервисов
 
@@ -85,8 +85,8 @@ import { grpc } from "@modules/remote-grpc";
 
 import test from "tape";
 
-test('Except barClientService will return output', async (t) => {
-  const output = await grpc.barClientService.Execute({ data: "bar" });
+test('Except fooClientService will return output', async (t) => {
+  const output = await grpc.fooClientService.Execute({ data: "bar" });
   t.strictEqual(output.data, "ok");
 })
 
@@ -96,14 +96,15 @@ test('Except barClientService will return output', async (t) => {
 
 ```tsx
 import { db } from "@modules/remote-db";
-db.todoRequestService.getTodoCount().then(console.log);
+await db.todoViewService.create({ title: "Hello world!" });
+console.log(await db.todoRequestService.getTodoCount());
 ```
 
 Используется сервер приложений [Appwrite](https://appwrite.io), обертка над MariaDB, позволяющая с ходу получить высчитывание метрик запросов, учет места на жестком диске, авторизацию OAuth 2.0, бекапы и [шину событий websocket](https://appwrite.io/docs/apis/realtime)
 
 ## Упрощаем разработку
 
-Критической проблемой микросервисной архитектуры является интегрируемость (IDE - Integrated development environment): программисту сложно вклиниться отладчиком, как правило, новички осуществляют debug через `console.log`. Особенно это заметно, если код изначально работает только в docker.
+Критической проблемой микросервисной архитектуры является интегрируемость (IDE - **Integrated** development environment): программисту сложно вклиниться отладчиком, как правило, новички осуществляют debug через `console.log`. Особенно это заметно, если код изначально работает только в docker.
 
 ![debug](./assets/debug.png)
 
@@ -111,7 +112,7 @@ db.todoRequestService.getTodoCount().then(console.log);
 
 ## Упрощаем деплой
 
-Используя [Lerna](https://lerna.js.org/), компиляция и запуск проекта осуществляется в одну команду через `npm start`. Хотим пересобрать, запускаем команду ещё раз. Хотим запустить новый дописанный код - запускаем `npm start && npm run test`. Окружение для запуска проекта установится автоматически после `npm install` благодаря скрипту `postinstall`
+Используя [Lerna](https://lerna.js.org/), компиляция и запуск проекта осуществляется в одну команду через `npm start` (параллельная сборка). Хотим пересобрать, запускаем команду ещё раз. Хотим запустить новый дописанный код - запускаем `npm start && npm run test`. Окружение для запуска проекта установится автоматически после `npm install` благодаря скрипту `postinstall`
 
 ```json
 {
@@ -238,6 +239,7 @@ module.exports = {
 Настройте окружение
 
 ```bash
+cp .env.example .env
 npm install
 npm start
 ```
@@ -277,6 +279,6 @@ export const grpc = {
 
 ```
 
-Далее, скопируйте папку [services/foo-service](services/foo-service) и на её основе пропишите логику. Взаимодействие с базой нужно вынести в [modules/remote-db](modules/remote-db) по этому же принципу. Не забывайте про логирование в LoggerService
+Далее, скопируйте папку [services/foo-service](services/foo-service) и на её основе пропишите логику. Взаимодействие с базой нужно вынести в [modules/remote-db](modules/remote-db) по этому же принципу. Не забывайте про логирование в LoggerService, каждый метод `view` слоя должен записать в лог имя сервиса, имя метода и аргументы
 
 ## Спасибо за внимание!
