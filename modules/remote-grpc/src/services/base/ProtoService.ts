@@ -6,7 +6,7 @@ import * as protoLoader from "@grpc/proto-loader";
 
 import { get } from "../../utils/get";
 
-import { CC_GRPC_MAP, CC_GRPT_PROTO_PATH } from "../../config/params";
+import { CC_GRPC_MAP, CC_GRPC_PROTO_PATH } from "../../config/params";
 
 import type LoggerService from "./LoggerService";
 
@@ -15,7 +15,7 @@ import TYPES from "../../config/types";
 const GRPC_READY_DELAY = 15_000;
 
 const readProto = (name: string) => {
-  const absolutePath = resolve(join(CC_GRPT_PROTO_PATH, `${name}.proto`));
+  const absolutePath = resolve(join(CC_GRPC_PROTO_PATH, `${name}.proto`));
   console.log(`Using proto ${absolutePath}`);
   const packageDefinition = protoLoader.loadSync(
     absolutePath

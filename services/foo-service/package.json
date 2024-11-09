@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "@modules/remote-grpc": "*",
-    "@modules/remote-lib": "*"
+    "@modules/remote-db": "*"
   }
 }

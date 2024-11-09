@@ -22,4 +22,4 @@ export const CC_GRPC_MAP = {
     },
 } as const;
 
-export const CC_GRPT_PROTO_PATH = process.env.CC_GRPT_PROTO_PATH || "./proto";
+export const CC_GRPC_PROTO_PATH = process.env.CC_GRPC_PROTO_PATH || "./proto";
