@@ -1,4 +1,4 @@
-# ✡️ node-grpc-monorepo
+# 🔥 node-grpc-monorepo
 
 > Lerna monorepo ready for microservice development
 
