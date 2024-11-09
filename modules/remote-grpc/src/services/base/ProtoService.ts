@@ -4,6 +4,8 @@ import { inject } from "../../core/di";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 
+import { randomString } from 'functools-kit';
+
 import { get } from "../../utils/get";
 
 import { CC_GRPC_MAP, CC_GRPC_PROTO_PATH } from "../../config/params";
@@ -75,8 +77,16 @@ export class ProtoService {
         return {
           ...acm,
           [cur]: async (request: Record<string, unknown>) => {
-            this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur}`, { request });
-            return await grpcMethod(request);
+            const requestId = randomString();
+            try {
+              this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur} requestId=${requestId}`, { request });
+              const result = await grpcMethod(request);
+              this.loggerService.log(`remote-grpc protoService makeClient succeed service=${serviceName} method=${cur} requestId=${requestId}`, { request, result });
+              return result;
+            } catch (error) {
+              this.loggerService.log(`remote-grpc protoService makeClient failed service=${serviceName} method=${cur} requestId=${requestId}`, { request, error });
+              throw error;
+            }
           },
         }
       },
@@ -93,11 +103,14 @@ export class ProtoService {
       return {
         ...acm,
         [cur]: async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>) => {
-          this.loggerService.log(`remote-grpc protoService makeServer executing method service=${serviceName} method=${cur}`, { request: call.request });
+          const requestId = randomString();
+          this.loggerService.log(`remote-grpc protoService makeServer executing method service=${serviceName} method=${cur} requestId=${requestId}`, { request: call.request });
           try {
             const result = await executor(call.request);
+            this.loggerService.log(`remote-grpc protoService makeServer method succeed requestId=${requestId}`, { request: call.request, result });
             callback(null, result || {});
           } catch (error) {
+            this.loggerService.log(`remote-grpc protoService makeServer method failed requestId=${requestId}`, { request: call.request, error });
             callback(error as grpc.ServiceError, null);
           }
         },
