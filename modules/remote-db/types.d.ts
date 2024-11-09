@@ -1,13 +1,11 @@
 import { Client, Storage, Databases, Models } from 'node-appwrite';
 import * as functools_kit from 'functools-kit';
-import { Subject } from 'functools-kit';
 
 declare class LoggerService {
     log: (...args: any[]) => void;
 }
 
 declare class AppwriteService {
-    readonly reloadSubject: Subject<void>;
     client: Client;
     storage: Storage;
     databases: Databases;

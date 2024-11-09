@@ -31,7 +31,7 @@ declare class ProtoService {
     private readonly _protoMap;
     loadProto: (protoName: string) => grpc$1.GrpcObject;
     makeClient: <T = IService>(serviceName: ServiceName) => T;
-    makeServer: <T extends IService = IService>(serviceName: ServiceName, connector: T) => void;
+    makeServer: <T = IService>(serviceName: ServiceName, connector: T) => void;
 }
 
 declare class BarClientService implements GRPC.IBarService {

@@ -84,7 +84,7 @@ export class ProtoService {
     );
   };
 
-  makeServer = <T extends IService = IService>(serviceName: ServiceName, connector: T) => {
+  makeServer = <T = IService>(serviceName: ServiceName, connector: T) => {
     const { grpcHost, protoName, methodList } = CC_GRPC_MAP[serviceName];
     const proto = this.loadProto(protoName);
 

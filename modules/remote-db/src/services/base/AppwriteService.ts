@@ -2,20 +2,14 @@ import {
   AppwriteException,
   Client,
   Databases,
-  Functions,
   ID,
   Storage,
 } from "node-appwrite";
-import {
-  Subject,
-} from "functools-kit";
 import { v4 as uuid } from "uuid";
-import { CC_APPWRITE_API_TOKEN, CC_APPWRITE_DATABASE_ID, CC_APPWRITE_ENDPOINT_URL, CC_APPWRITE_PROJECT_ID, CC_APPWRITE_STORAGE_BUCKET_ID } from "../../config/params";
+import { CC_APPWRITE_API_KEY, CC_APPWRITE_DATABASE_ID, CC_APPWRITE_ENDPOINT_URL, CC_APPWRITE_PROJECT_ID, CC_APPWRITE_STORAGE_BUCKET_ID } from "../../config/params";
 import { readTransform, writeTransform } from "../../utils/transform";
 
 export class AppwriteService {
-  public readonly reloadSubject = new Subject<void>();
-
   public client: Client = null as never;
 
   public storage: Storage = null as never;
@@ -67,7 +61,7 @@ export class AppwriteService {
     client
       .setEndpoint(CC_APPWRITE_ENDPOINT_URL)
       .setProject(CC_APPWRITE_PROJECT_ID)
-      .setJWT(CC_APPWRITE_API_TOKEN)
+      .setKey(CC_APPWRITE_API_KEY)
       .setLocale("en-GB");
     const databases = new Databases(client);
     const storage = new Storage(client);
@@ -76,7 +70,6 @@ export class AppwriteService {
       this.databases = databases;
       this.storage = storage;
     }
-    this.reloadSubject.next();
   };
 
   uploadFile = async (file: File) => {
