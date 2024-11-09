@@ -1,5 +1,5 @@
 import { globSync } from "glob";
-import { basename, join, extname } from "path";
+import { basename, join, extname, resolve } from "path";
 
 import { createCompletion, loadModel } from "gpt4all";
 
@@ -8,15 +8,20 @@ import fs from "fs";
 const GPT_PROMPT =
   "Please write a summary for that Typescript API Reference with several sentences in more human way";
 
+console.log("Loading model");
+
 const model = await loadModel("Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf");
 
 const generateDescription = async (filePath) => {
+    console.log(`Generating content for ${resolve(filePath)}`);
+    console.time("EXECUTE");
     const data = fs.readFileSync(filePath).toString();
     const chat = await model.createChatSession({
         temperature: 0.8,
         systemPrompt: `### System:\n${GPT_PROMPT}.\n\n`,
     });
     const result = await createCompletion(chat, data);
+    console.timeEnd("EXECUTE");
     return result.choices[0].message.content;
 }
 

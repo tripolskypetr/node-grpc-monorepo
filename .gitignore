@@ -6,3 +6,5 @@ public/*
 !public/.gitkeep
 docs/*
 !docs/.gitkeep
+build/*
+!build/.gitkeep
