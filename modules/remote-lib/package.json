@@ -2,7 +2,8 @@
   "name": "@modules/remote-lib",
   "private": true,
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "build:docs": "rimraf docs && mkdir docs && touch docs/.gitkeep && node ../../scripts/dts-docs.js ./types.d.ts ./docs"
   },
   "type": "module",
   "module": "build/index.mjs",

@@ -27,6 +27,7 @@ interface IService {
     [key: string | number | symbol]: Function;
 }
 declare class ProtoService {
+    private readonly loggerService;
     private readonly _protoMap;
     loadProto: (protoName: string) => grpc$1.GrpcObject;
     makeClient: <T = IService>(serviceName: ServiceName) => T;

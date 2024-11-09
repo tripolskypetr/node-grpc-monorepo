@@ -9,6 +9,8 @@
         "build:modules": "dotenv -e .env -- lerna run build --scope=@modules/*",
         "build:apps": "dotenv -e .env -- lerna run build --scope=@apps/*",
         "build:services": "dotenv -e .env -- lerna run build --scope=@services/*",
+        "build:docs": "sh ./scripts/linux/docs.sh",
+        "build:docs:win": ".\\scripts\\win\\docs.bat",
         "postinstall": "npm run postinstall:lerna && npm run postinstall:pm2",
         "postinstall:lerna": "npm list -g lerna || npm install -g lerna",
         "postinstall:pm2": "npm list -g pm2 || npm install -g pm2",
@@ -25,7 +27,8 @@
         "@prettier/sync": "0.5.2",
         "@types/glob": "8.1.0",
         "dotenv": "16.4.5",
-        "glob": "11.0.0"
+        "glob": "11.0.0",
+        "touch-cli": "^0.0.1"
     },
     "devDependencies": {
         "rollup": "3.29.4",
@@ -35,6 +38,8 @@
         "@rollup/plugin-typescript": "11.1.6",
         "tslib": "2.7.0",
         "dotenv-cli": "7.4.2",
-        "translit-rus-eng": "1.0.8"
+        "translit-rus-eng": "1.0.8",
+        "rimraf": "6.0.1",
+        "touch": "3.1.1"
     }
 }

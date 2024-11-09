@@ -5,6 +5,7 @@
   "scripts": {
     "start": "npm run build && node ./build/index.mjs",
     "start:debug": "npm run build && node --inspect-brk ./build/index.mjs",
+    "build:docs": "rimraf docs && mkdir docs && touch docs/.gitkeep && node ../../scripts/dts-docs.js ./types.d.ts ./docs",
     "build": "rollup -c"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
 import { join, resolve } from "path";
+import { inject } from "../../core/di";
 
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
@@ -6,6 +7,12 @@ import * as protoLoader from "@grpc/proto-loader";
 import { get } from "../../utils/get";
 
 import { CC_GRPC_MAP, CC_GRPT_PROTO_PATH } from "../../config/params";
+
+import type LoggerService from "./LoggerService";
+
+import TYPES from "../../config/types";
+
+const GRPC_READY_DELAY = 15_000;
 
 const readProto = (name: string) => {
   const absolutePath = resolve(join(CC_GRPT_PROTO_PATH, `${name}.proto`));
@@ -38,6 +45,9 @@ interface IService {
 }
 
 export class ProtoService {
+
+  private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
+
   private readonly _protoMap = new Map<string, grpc.GrpcObject>();
 
   loadProto = (protoName: string) => {
@@ -50,12 +60,26 @@ export class ProtoService {
     const { grpcHost, protoName, methodList } = CC_GRPC_MAP[serviceName];
     const proto = this.loadProto(protoName);
     const Ctor = get(proto, serviceName) as unknown as Ctor;
-    const barClient = new Ctor(grpcHost, grpc.credentials.createInsecure());
+    const grpcClient = new Ctor(grpcHost, grpc.credentials.createInsecure());
+
+    grpcClient.waitForReady(Date.now() + GRPC_READY_DELAY, (err: Error) => {
+      if (err) {
+        this.loggerService.log(`remote-grpc protoService failed to connect to ${serviceName} due to timeout`);
+        throw err;
+      }
+    });
+  
     return methodList.reduce<T>(
-      (acm, cur) => ({
-        ...acm,
-        [cur]: promisifyMethod(get(barClient, cur).bind(barClient)),
-      }),
+      (acm, cur) => {
+        const grpcMethod = promisifyMethod(get(grpcClient, cur).bind(grpcClient));
+        return {
+          ...acm,
+          [cur]: async (request: Record<string, unknown>) => {
+            this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur}`, { request });
+            return await grpcMethod(request);
+          },
+        }
+      },
       {} as unknown as T
     );
   };
@@ -69,6 +93,7 @@ export class ProtoService {
       return {
         ...acm,
         [cur]: async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>) => {
+          this.loggerService.log(`remote-grpc protoService makeServer executing method service=${serviceName} method=${cur}`, { request: call.request });
           try {
             const result = await executor(call.request);
             callback(null, result || {});
