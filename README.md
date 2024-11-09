@@ -77,7 +77,7 @@ export class FooService {
 grpc.protoService.makeServer("FooService", new FooService);
 ```
 
-Далее, сервер gRPC шарит методы класса в одну строчку. Методы возвращают `Promise`, можем делать `await` и бросать исключения, в дополнении к `@grpc/grpc-js` не нужно работать с [callback hell](https://en.wiktionary.org/wiki/callback_hell).
+Далее, сервер gRPC шарит методы класса в одну строчку. Методы возвращают `Promise`, можем делать `await` и бросать исключения, в дополнении к `@grpc/grpc-js`, не нужно работать с [callback hell](https://en.wiktionary.org/wiki/callback_hell).
 
 
 ```tsx
