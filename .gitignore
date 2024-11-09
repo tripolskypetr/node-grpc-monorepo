@@ -4,3 +4,5 @@ node_modules
 .DS_Store
 public/*
 !public/.gitkeep
+docs/*
+!docs/.gitkeep
