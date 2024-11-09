@@ -14,6 +14,8 @@ const createCopy = (prefix = "modules") => {
             const fileName = basename(filePath);
             fs.copyFileSync(`./${prefix}/${moduleName}/build/${fileName}`, `./build/${prefix}/${moduleName}/build/${fileName}`);
         }
+        fs.copyFileSync(`./${prefix}/${moduleName}/package.json`, `./build/${prefix}/${moduleName}/package.json`);
+        fs.existsSync(`./${prefix}/${moduleName}/types.d.ts`) && fs.copyFileSync(`./${prefix}/${moduleName}/types.d.ts`, `./build/${prefix}/${moduleName}/types.d.ts`);
     }
 }
 
@@ -24,3 +26,6 @@ touch("./build/.gitkeep");
 createCopy("modules")
 createCopy("services")
 createCopy("apps")
+
+fs.copyFileSync(`./package.json`, `./build/package.json`);
+fs.copyFileSync(`./config/ecosystem.config.js`, `./build/ecosystem.config.js`);

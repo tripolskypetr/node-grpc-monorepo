@@ -29,13 +29,14 @@ const generateDescription = async (filePath) => {
 {
     for (const modulePath of globSync("./modules/*", { onlyDirectories: true })) {
         const moduleName = basename(modulePath);
+        console.log(`Generating documentation for module ${moduleName}`);
         const classList = globSync(`./modules/${moduleName}/docs/classes/*`);
         const outputPath = join(process.cwd(), 'docs', `${moduleName}.md`);
         const output = [];
         output.push(`# ${moduleName}`);
         output.push("");
         if (!classList.length) {
-            output.push("Нет данных");
+            output.push("No data available");
         }
         for (const classPath of classList) {
             const className = basename(classPath, extname(classPath));
@@ -52,13 +53,14 @@ const generateDescription = async (filePath) => {
 {
     for (const modulePath of globSync("./services/*", { onlyDirectories: true })) {
         const moduleName = basename(modulePath);
+        console.log(`Generating documentation for service ${moduleName}`);
         const classList = globSync(`./services/${moduleName}/docs/classes/*`);
         const outputPath = join(process.cwd(), 'docs', `${moduleName}.md`);
         const output = [];
         output.push(`# ${moduleName}`);
         output.push("");
         if (!classList.length) {
-            output.push("Нет данных");
+            output.push("No data available");
         }
         for (const classPath of classList) {
             const className = basename(classPath, extname(classPath));
