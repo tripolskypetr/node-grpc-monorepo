@@ -1,7 +1,9 @@
 import * as grpc$1 from '@grpc/grpc-js';
 
 declare class LoggerService {
+    private _logger;
     log: (...args: any[]) => void;
+    setPrefix: (prefix: string) => void;
 }
 
 declare const CC_GRPC_MAP: {

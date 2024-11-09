@@ -9,5 +9,6 @@ export class BarService {
     }
 }
 
+grpc.loggerService.setPrefix("bar-service");
 grpc.protoService.makeServer<BarService>("BarService", new BarService);
 

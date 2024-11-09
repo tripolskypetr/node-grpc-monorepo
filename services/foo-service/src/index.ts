@@ -9,5 +9,5 @@ export class FooService {
     }
 }
 
+grpc.loggerService.setPrefix("foo-service");
 grpc.protoService.makeServer("FooService", new FooService);
-

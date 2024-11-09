@@ -2,7 +2,9 @@ import { Client, Storage, Databases, Models } from 'node-appwrite';
 import * as functools_kit from 'functools-kit';
 
 declare class LoggerService {
+    private _logger;
     log: (...args: any[]) => void;
+    setPrefix: (prefix: string) => void;
 }
 
 declare class AppwriteService {

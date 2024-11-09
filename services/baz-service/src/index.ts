@@ -9,5 +9,6 @@ export class BazService {
     }
 }
 
+grpc.loggerService.setPrefix("baz-service");
 grpc.protoService.makeServer("BazService", new BazService);
 

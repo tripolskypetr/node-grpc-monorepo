@@ -49,3 +49,4 @@ const server = new http.Server(
 );
 
 server.listen(50050);
+grpc.loggerService.setPrefix("host-main");
