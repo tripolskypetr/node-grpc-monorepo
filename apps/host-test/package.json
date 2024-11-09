@@ -14,8 +14,5 @@
   },
   "devDependencies": {
     "@types/tape": "5.6.4"
-  },
-  "peerDependencies": {
-    "typescript": "5.0.0"
   }
 }

@@ -8,14 +8,8 @@
     "build:docs": "rimraf docs && mkdir docs && touch docs/.gitkeep && node ../../scripts/dts-docs.js ./types.d.ts ./docs",
     "build": "rollup -c"
   },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "dependencies": {
     "@modules/remote-grpc": "*",
     "@modules/remote-lib": "*"
-  },
-  "peerDependencies": {
-    "typescript": "5.0.0"
   }
 }
