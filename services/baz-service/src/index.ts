@@ -2,7 +2,9 @@ import { grpc } from "@modules/remote-grpc";
 
 grpc.protoService.makeServer("BazService", {
     Execute: (request: any) => {
-        console.log("baz-service", { request })
-        return request
+        if (request.data !== "baz") {
+            throw new Error("data !== baz")
+        }
+        return { data: "ok" }
     }
 });

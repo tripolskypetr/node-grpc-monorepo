@@ -2,6 +2,7 @@
     "name": "bun-event-bus",
     "private": true,
     "scripts": {
+        "test": "cd apps/host-test && npm start",
         "start": "npm run pm2:stop && npm run build && npm run pm2:start",
         "pm2:start": "pm2 start ./config/ecosystem.config.js",
         "pm2:stop": "pm2 kill",
@@ -30,7 +31,7 @@
         "@types/glob": "8.1.0",
         "dotenv": "16.4.5",
         "glob": "11.0.0",
-        "touch-cli": "^0.0.1"
+        "touch-cli": "0.0.1"
     },
     "devDependencies": {
         "rollup": "3.29.4",
