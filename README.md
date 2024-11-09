@@ -95,6 +95,52 @@ test('Except fooClientService will return output', async (t) => {
 **2. Взаимодействие с базой данных (MVC), вынесен в общий код и доступно из приложения хоста, из сервисов и других библиотек**
 
 ```tsx
+export class TodoDbService {
+
+    private readonly appwriteService = inject<AppwriteService>(TYPES.appwriteService);
+
+    findAll = async () => {
+        return await resolveDocuments<ITodoRow>(listDocuments(CC_APPWRITE_TODO_COLLECTION_ID));
+    };
+
+    findById = async (id: string) => {
+        return await this.appwriteService.databases.getDocument<ITodoDocument>(
+            CC_APPWRITE_DATABASE_ID,
+            CC_APPWRITE_TODO_COLLECTION_ID,
+            id,
+        );
+    };
+
+    create = async (dto: ITodoDto) => {
+        return await this.appwriteService.databases.createDocument<ITodoDocument>(
+            CC_APPWRITE_DATABASE_ID,
+            CC_APPWRITE_TODO_COLLECTION_ID,
+            this.appwriteService.createId(),
+            dto,
+        );
+    };
+
+    update = async (id: string, dto: Partial<ITodoDto>) => {
+        return await this.appwriteService.databases.updateDocument<ITodoDocument>(
+            CC_APPWRITE_DATABASE_ID,
+            CC_APPWRITE_TODO_COLLECTION_ID,
+            id,
+            dto,
+        );
+    };
+
+    remove = async (id: string) => {
+        return await this.appwriteService.databases.deleteDocument(
+            CC_APPWRITE_DATABASE_ID,
+            CC_APPWRITE_TODO_COLLECTION_ID,
+            id,
+        );
+    };
+
+};
+
+...
+
 import { db } from "@modules/remote-db";
 await db.todoViewService.create({ title: "Hello world!" });
 console.log(await db.todoRequestService.getTodoCount());
