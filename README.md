@@ -20,6 +20,26 @@
 
 **1. Boilerplate код, чтобы gRPC заработал, громоздок. Создание клиента и сервера gRPC вынесено в общий код, прикладной код запускает микросервис в одну строку**
 
+```proto
+syntax = "proto3";
+
+message FooRequest {
+    string data = 1;
+}
+
+message FooResponse {
+    string data = 1;
+}
+
+service FooService {
+  rpc Execute (FooRequest) returns (FooResponse);
+}
+
+```
+
+Есть `proto` файл, описывающий `FooService` с методом `Execute`, получающий одним аргументом объект со строкой `data`
+
+
 ```tsx
 export class FooClientService implements GRPC.IFooService {
 
