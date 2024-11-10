@@ -10,7 +10,9 @@ const GPT_PROMPT =
 
 console.log("Loading model");
 
-const model = await loadModel("Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf");
+const model = await loadModel("Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf", {
+    verbose: true,
+});
 
 const generateDescription = async (filePath) => {
     console.log(`Generating content for ${resolve(filePath)}`);

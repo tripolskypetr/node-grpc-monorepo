@@ -2,19 +2,33 @@
 
 > Lerna monorepo ready for microservice development
 
-![meme](./meme.png)
+## Понятная ООП-шнику микросервисная архитектура
 
-## Тебе не нужно разбивать монолит, если его можно импортировать
+Крупные приложения пишутся в Domain Driven Design. Частным случаем этой архитектуры является Model View Controller в монолите. Этому учат в университетах, найти кадр просто. Однако, чтобы проект держал нагрузку, нужен микросервис. Найти хороший кадр, который сможет поддерживать ООП код в микросервисе, а не процедурный, сложно.
 
-До изобретения микросервисов бизнес выделял много времени на проектирование сложных систем с использованием доменной модели MVC внутри одного монолита. Однако, новые условия рынка потребовали урезать бюджет IT отдела, чистая архитектура оставалась в голове программиста, а код писался только исходя из сию минутной выгоды. Подрастающее поколение специалистов изучают программирование в режиме закрыть максимальное количество пунктов резюме, при этом, вопрос повторного использования другим специалистом кода не рассматривался, так как за будущие проблемы не платят деньги. То что такое поведение коллег по меньшей мере не культурно не является сутью вопроса, проблема в том, что плохой код пораждает незаменимых специалистов и, при уходе такого специалиста, так как передать работу полностью технически невозможно, срыв проекта в средней временной перспективе
+Чтобы разрешить проблему процедурного кода в микросервисе, был разработан starter kit масштабируемого NodeJS микросервиса в монорепозитории
 
-![onion-architecture](./assets/onion-architecture.png)
+## Решаемые проблемы
 
-Проблему можно избежать техническими методами, грамотно декомпозировав код между микросервисами. Ранее, доменная модель [Model View Controller](https://en.wikipedia.org/wiki/Model–view–controller) позволяла удерживать читаемость проекта так, чтобы специалиста можно было быстро подменить, однако, так как ООП языки (Java, C#) используют пространства имен для разделения модулей, декомпозиция на микросервисы вызывала сложности.
+1. **Работа с gRPC через TypeScript**
 
-![monorepo](./assets/monorepo-polyrepo.svg)
+На момент 2016 года не было разделения `commonjs` и `esm` модулей и Typescript, поэтому файлы proto предлагали конвертировать в js сомнительного содержания. В этом starter kit архитектура подразумевает доступ через [sdk object](https://github.com/lonestone/nest-sdk-generator) с поддержкой `IntelliSense`, проблема генерации `d.ts` из `proto` решена скриптом на js без нативного бинарника
 
-С появлением NodeJS и [монорепозиториев](https://en.wikipedia.org/wiki/Monorepo) проблемы можно избежать, грамотно организовав структуру проекта на старте. Данный проект представляет собой микросервисную архитектуру, где host (папка `apps`) приложения взаимодействуют с микросервисами (папка `services`) через шину событий [GRPC](https://en.wikipedia.org/wiki/GRPC), повторно используя общий код луковичной композиции сервисов со слоем логирования и базы данных из общего кода (папка `modules`)
+2. **Запуск backend без docker через `npm start`**
+
+Иногда, нужно получить доступ к js файлам без изоляции, чтобы просмотреть работу отладчиком или добавить в уже транспилированный бандл `console.log`. Для запуска микросервисов используется [PM2](https://pm2.keymetrics.io/)
+
+3. **Единый источник ответственности для работы с базой данных**
+
+Для работы с базой данных лучше использовать луковичную архитектуру Model View Presenter, где слой представления организует маппинг и логгирование взаимодействия c данными, слой сервисов базы данных осуществляет абстракцию от СУБД. Проблема масштабируемости этого паттерна решена вынесением кода в общий модуль, упрощенно, каждый микросервис может разместить в себе копию монолита.
+
+4. **Выполнение методов микросервисов без Postman**
+
+Хост приложения, осуществляющие взаимодействие с сервисами по gRPC лежат в папке `apps`. Было создано два приложения: `apps/host-main` и `apps/host-test`, первое с веб сервером, во втором можно написать произвольный код и запустить его командой `npm run test`. Так же, в `apps/host-test` можно писать юнит тесты, если нужно вести разработку тестированием
+
+5. **Автоматическое выявление не SOLID кода с использованием языковых моделей**
+
+Если недобросовестный сотрудник пишет код не по SOLID, объективно оценить область ответственности класса может нейронка. В этом starter kit, при транспиляции сервиса, типы экспортируются в файлы `types.d.ts`, которые используются для анализа назначения каждого класса библиотеки или микросервиса и автоматической документации в понятном человеку виде, пару абзацев текста на класс
 
 ## Упрощаем взаимодействие микросервисов
 
@@ -152,8 +166,6 @@ console.log(await db.todoRequestService.getTodoCount());
 
 Критической проблемой микросервисной архитектуры является интегрируемость (IDE - **Integrated** development environment): программисту сложно вклиниться отладчиком, как правило, новички осуществляют debug через `console.log`. Особенно это заметно, если код изначально работает только в docker.
 
-![debug](./assets/debug.png)
-
 Помимо основного хост приложения `apps/host-main` (REST API веб сервер), сделана точка входа `apps/host-test` для разработки тестированием. Она не использует test runtime, другими словами, можем прямо в `public static void main()` дернуть ручку микросервиса или метод контроллер базы данных без postman. Сразу добавлен шорткат `npm run test`, который комилирует и запускает приложение. Так же, можно перейти в папку любого сервиса или хоста и запустить `npm run start:debug`
 
 ## Упрощаем деплой
@@ -271,12 +283,40 @@ module.exports = {
 
 Разработка предполагает использование [функционального программирования](https://en.wikipedia.org/wiki/MapReduce) в `host` приложениях и объектно ориентированного по [SOLID](https://en.wikipedia.org/wiki/SOLID) в сервисах и общем коде. Как следствие
 
-1. Код на классах
-2. Есть инъекция зависимостей
+1. **Код на классах**
+2. **Есть инъекция зависимостей**
 
 Файлы `rollup.config.mjs` создают [types.d.ts](modules/remote-grpc/types.d.ts), содержащие объявления классов. Из них генерируется [API Reference](https://github.com/react-declarative/react-declarative/blob/master/docs/auto/interfaces/IQuery.md) в формате markdown. Далее, файлы markdown попадают в нейронку [Nous-Hermes-2-Mistral-7B-DPO](./scripts/gpt-docs.mjs), которая возвращает результат в читаемом человеком виде
 
-![docs](./assets/docs.png)
+```md
+# remote-grpc
+
+## ProtoService
+
+ProtoService is a TypeScript class that serves as an interface for managing gRPC services. It has a constructor, properties such as loggerService and _protoMap, and methods like loadProto, makeClient, and makeServer. The loggerService property is used for logging, while _protoMap stores the protobuf definitions. The loadProto method loads a specific protobuf definition based on the provided name. The makeClient method creates a client for the specified gRPC service, while makeServer creates a server for the specified gRPC service using a connector. The available services are "FooService", "BarService", and "BazService".
+
+## LoggerService
+
+The LoggerService is a TypeScript class that provides logging functionality. It has a constructor which initializes the `_logger` property, and two methods: `log()` and `setPrefix()`. 
+
+The `_logger` property is a variable that stores the logger instance, which will be used for logging messages. The `log()` method is used to log messages with optional arguments. The `setPrefix()` method is used to set a prefix for the log messages.
+
+## FooClientService
+
+The `FooClientService` is a TypeScript class that implements the `GRPC.IFooService` interface, which means it provides methods to interact with a gRPC service. The class has three properties: `protoService`, `loggerService`, and `_fooClient`. 
+
+The constructor of `FooClientService` does not take any arguments.
+
+The `protoService` property is of type `any`, and it seems to hold the protobuf service definition.
+The `loggerService` property is of type `any`, and it appears to be a logger service for logging messages.
+The `_fooClient` property is of type `any`, and it seems to be a client for communicating with the gRPC service.
+
+The `Execute` method is a generic function that takes any number of arguments and returns a Promise. It is used to execute the gRPC service methods.
+The `init` method is a void function that initializes the `_fooClient` property.
+
+Overall, `FooClientService` is a class that provides methods to interact with a gRPC service, using the protobuf service definition and a logger for logging messages. It initializes the gRPC client and provides a generic `Execute` method to execute the gRPC service methods.
+
+```
 
 Да, верно, автоматическая генерация документации через [CI/CD](https://en.wikipedia.org/wiki/CI/CD). ~~Меняем промпт и видим, соответствует ли класс SOLID~~
 
