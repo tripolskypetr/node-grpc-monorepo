@@ -1,6 +1,6 @@
 # 🔥 node-grpc-monorepo
 
-> Lerna monorepo ready for TypeScript-gRPC microservice development
+> A TypeScript-gRPC monorepo starter kit that simplifies microservices development using OOP principles. Features type-safe gRPC communication, PM2 process management, unified database operations, easy debugging without Docker, and automated SOLID code analysis with AI-powered documentation.
 
 ![meme](./meme.png)
 
