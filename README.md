@@ -1,38 +1,40 @@
 # 🔥 node-grpc-monorepo
 
-> Lerna monorepo ready for microservice development
+> Lerna monorepo ready for TypeScript-gRPC microservice development
 
-## Понятная ООП-шнику микросервисная архитектура
+![meme](./meme.png)
 
-Крупные приложения пишутся в Domain Driven Design. Частным случаем этой архитектуры является Model View Controller в монолите. Этому учат в университетах, найти кадр просто. Однако, чтобы проект держал нагрузку, нужен микросервис. Найти хороший кадр, который сможет поддерживать ООП код в микросервисе, а не процедурный, сложно.
+## Microservice Architecture That's Clear to OOP Developers
 
-Чтобы разрешить проблему процедурного кода в микросервисе, был разработан starter kit масштабируемого NodeJS микросервиса в монорепозитории
+Large applications are written in Domain Driven Design. A special case of this architecture is Model View Controller in a monolith. This is taught in universities, and finding talent is simple. However, to handle high loads, you need microservices. Finding good talent who can maintain OOP code in microservices, rather than procedural code, is difficult.
 
-## Решаемые проблемы
+To solve the problem of procedural code in microservices, a starter kit for a scalable NodeJS microservice in a monorepo was developed.
 
-1. **Работа с gRPC через TypeScript**
+## Problems Solved
 
-На момент 2016 года не было разделения `commonjs` и `esm` модулей и Typescript, поэтому файлы proto предлагали конвертировать в js сомнительного содержания. В этом starter kit архитектура подразумевает доступ через [sdk object](https://github.com/lonestone/nest-sdk-generator) с поддержкой `IntelliSense`, проблема генерации `d.ts` из `proto` решена скриптом на js без нативного бинарника. Любое взаимодействие микросервисов осуществляется через вызов метода интерфейса целевого класса и класса обертки.
+1. **Working with gRPC through TypeScript**
 
-2. **Запуск backend без docker через `npm start`**
+As of 2016, there was no separation between `commonjs` and `esm` modules and TypeScript, so proto files were suggested to be converted into questionable js content. In this starter kit, the architecture implies access through an [sdk object](https://github.com/lonestone/nest-sdk-generator) with `IntelliSense` support, the problem of generating `d.ts` from `proto` is solved by a js script without a native binary. Any interaction between microservices is done through calling an interface method of the target class and wrapper class.
 
-Иногда, нужно получить доступ к js файлам без изоляции, чтобы просмотреть работу отладчиком или добавить в уже транспилированный бандл `console.log`. Для запуска микросервисов используется [PM2](https://pm2.keymetrics.io/)
+2. **Running backend without docker via `npm start`**
 
-3. **Единый источник ответственности для работы с базой данных**
+Sometimes, you need access to js files without isolation to inspect them with a debugger or add `console.log` to an already transpiled bundle. [PM2](https://pm2.keymetrics.io/) is used to run microservices.
 
-Для работы с базой данных лучше использовать луковичную архитектуру Model View Presenter, где слой представления организует маппинг и логирование взаимодействия c данными, слой сервисов базы данных осуществляет абстракцию от СУБД. Проблема масштабируемости этого паттерна решена вынесением кода в общий модуль, упрощенно, каждый микросервис может разместить в себе копию монолита.
+3. **Single Source of Responsibility for Database Operations**
 
-4. **Выполнение методов микросервисов без Postman**
+For database operations, it's better to use the onion architecture Model View Presenter, where the presentation layer organizes mapping and logging of data interactions, and the database services layer provides abstraction from the DBMS. The scalability problem of this pattern is solved by moving the code to a common module; simplified, each microservice can host a copy of the monolith.
 
-Хост приложения, осуществляющие взаимодействие с сервисами по gRPC лежат в папке `apps`. Было создано два приложения: `apps/host-main` и `apps/host-test`, первое с веб сервером, во втором можно написать произвольный код и запустить его командой `npm run test`. Так же, в `apps/host-test` можно писать юнит тесты, если нужно вести разработку тестированием
+4. **Executing Microservice Methods without Postman**
 
-5. **Автоматическое выявление не SOLID кода с использованием языковых моделей**
+Host applications that interact with services via gRPC are located in the `apps` folder. Two applications were created: `apps/host-main` and `apps/host-test`, the first with a web server, in the second you can write arbitrary code and run it with the `npm run test` command. Also, in `apps/host-test` you can write unit tests if you need to do test-driven development.
 
-Если недобросовестный сотрудник пишет код не по SOLID, объективно оценить область ответственности класса может нейронка. В этом starter kit, при транспиляции сервиса, типы экспортируются в файлы `types.d.ts`, которые используются для анализа назначения каждого класса библиотеки или микросервиса и автоматической документации в понятном человеком виде, пару абзацев текста на класс
+5. **Automatic Detection of non-SOLID Code Using Language Models**
 
-## Упрощаем взаимодействие микросервисов
+If an unreliable employee writes code that doesn't follow SOLID principles, a neural network can objectively assess the class's area of responsibility. In this starter kit, when transpiling a service, types are exported to `types.d.ts` files, which are used to analyze the purpose of each class in the library or microservice and automatically document it in a human-readable form, a couple of paragraphs of text per class.
 
-**1. Boilerplate код, чтобы gRPC заработал, громоздок. Создание клиента и сервера gRPC вынесено в общий код, прикладной код запускает микросервис в одну строку**
+## Simplifying Microservice Interaction
+
+**1. Boilerplate code to make gRPC work is cumbersome. Creating gRPC client and server is moved to common code, application code launches the microservice in one line**
 
 ```proto
 syntax = "proto3";
@@ -48,11 +50,9 @@ message FooResponse {
 service FooService {
   rpc Execute (FooRequest) returns (FooResponse);
 }
-
 ```
 
-Есть `proto` файл, описывающий `FooService` с методом `Execute`, получающий одним аргументом объект со строкой `data`
-
+There's a `proto` file describing `FooService` with an `Execute` method that receives an object with a `data` string as one argument.
 
 ```tsx
 export class FooClientService implements GRPC.IFooService {
@@ -74,7 +74,7 @@ export class FooClientService implements GRPC.IFooService {
 }
 ```
 
-Файлы `*.proto` преобразуются в `*.d.ts` скриптом `scripts/generate-dts.mjs` (генерирует простратство имен `GRPC`), далее пишется обертка, чтобы уточнить типы на стороне Typescript.
+The `*.proto` files are converted to `*.d.ts` by the `scripts/generate-dts.mjs` script (generates the `GRPC` namespace), then a wrapper is written to specify types on the TypeScript side.
 
 ```tsx
 import { grpc } from "@modules/remote-grpc";
@@ -91,8 +91,7 @@ export class FooService {
 grpc.protoService.makeServer("FooService", new FooService);
 ```
 
-Далее, сервер gRPC шарит методы класса в одну строчку. Методы возвращают `Promise`, можем делать `await` и бросать исключения, в дополнении к `@grpc/grpc-js`, не нужно работать с [callback hell](https://en.wiktionary.org/wiki/callback_hell).
-
+Then, the gRPC server shares class methods in one line. Methods return `Promise`, we can use `await` and throw exceptions, in addition to `@grpc/grpc-js`, no need to work with [callback hell](https://en.wiktionary.org/wiki/callback_hell).
 
 ```tsx
 import { grpc } from "@modules/remote-grpc";
@@ -103,10 +102,9 @@ test('Except fooClientService will return output', async (t) => {
   const output = await grpc.fooClientService.Execute({ data: "bar" });
   t.strictEqual(output.data, "ok");
 })
-
 ```
 
-**2. Взаимодействие с базой данных (MVC), вынесен в общий код и доступно из приложения хоста, из сервисов и других библиотек**
+**2. Database interaction (MVC) is moved to common code and is available from the host application, services, and other libraries**
 
 ```tsx
 export class TodoDbService {
@@ -160,17 +158,17 @@ await db.todoViewService.create({ title: "Hello world!" });
 console.log(await db.todoRequestService.getTodoCount());
 ```
 
-Используется сервер приложений [Appwrite](https://appwrite.io), обертка над MariaDB, позволяющая с ходу получить высчитывание метрик запросов, учет места на жестком диске, авторизацию OAuth 2.0, бекапы и [шину событий websocket](https://appwrite.io/docs/apis/realtime)
+[Appwrite](https://appwrite.io) application server is used, a wrapper over MariaDB that provides immediate access to request metrics calculation, disk space accounting, OAuth 2.0 authorization, backups, and [websocket event bus](https://appwrite.io/docs/apis/realtime).
 
-## Упрощаем разработку
+## Simplifying Development
 
-Критической проблемой микросервисной архитектуры является интегрируемость (IDE - **Integrated** development environment): программисту сложно вклиниться отладчиком, как правило, новички осуществляют debug через `console.log`. Особенно это заметно, если код изначально работает только в docker.
+A critical problem of microservice architecture is integration (IDE - **Integrated** development environment): it's difficult for programmers to inject a debugger, typically newcomers debug through `console.log`. This is especially noticeable if the code initially only works in docker.
 
-Помимо основного хост приложения `apps/host-main` (REST API веб сервер), сделана точка входа `apps/host-test` для разработки тестированием. Она не использует test runtime, другими словами, можем прямо в `public static void main()` дернуть ручку микросервиса или метод контроллер базы данных без postman. Сразу добавлен шорткат `npm run test`, который комилирует и запускает приложение. Так же, можно перейти в папку любого сервиса или хоста и запустить `npm run start:debug`
+In addition to the main host application `apps/host-main` (REST API web server), an entry point `apps/host-test` is made for test-driven development. It doesn't use the test runtime, in other words, we can directly call a microservice handle or database controller method without postman in `public static void main()`. A shortcut `npm run test` is already added, which compiles and runs the application. Also, you can go to any service or host folder and run `npm run start:debug`.
 
-## Упрощаем деплой
+## Simplifying Deployment
 
-Используя [Lerna](https://lerna.js.org/), компиляция и запуск проекта осуществляется в одну команду через `npm start` (параллельная сборка). Хотим пересобрать, запускаем команду ещё раз. Хотим запустить новый дописанный код - запускаем `npm start && npm run test`. Окружение для запуска проекта установится автоматически после `npm install` благодаря скрипту `postinstall`
+Using [Lerna](https://lerna.js.org/), project compilation and launch is done in one command through `npm start` (parallel build). Want to rebuild, run the command again. Want to run newly written code - run `npm start && npm run test`. The environment for running the project will be installed automatically after `npm install` thanks to the `postinstall` script.
 
 ```json
 {
@@ -198,7 +196,7 @@ console.log(await db.todoRequestService.getTodoCount());
     },
 ```
 
-Для автоматического перезапуска микросервисов и хостов при ошибке, используется менеджер процессов [PM2](https://pm2.keymetrics.io/). Из коробки предоставляет [crontab](https://crontab.guru/), что удобно, так как не нужно настраивать со стороны операционки.
+For automatic restart of microservices and hosts on error, the [PM2](https://pm2.keymetrics.io/) process manager is used. It provides [crontab](https://crontab.guru/) out of the box, which is convenient as it doesn't need to be configured from the OS side.
 
 ```js
 const dotenv = require('dotenv')
@@ -262,12 +260,11 @@ module.exports = {
         ...serviceList,
     ],
 };
-
 ```
 
-## Упрощаем логирование
+## Simplifying Logging
 
-Как можно заметить в [ProtoService](modules/remote-grpc/src/services/base/ProtoService.ts), все вызовы gRPC пишутся в лог, в том числе с аргументами и результатом выполнения или ошибкой.
+As you can see in [ProtoService](modules/remote-grpc/src/services/base/ProtoService.ts), all gRPC calls are logged, including arguments and execution results or errors.
 
 ```log
 {"level":30,"time":1731179018964,"pid":18336,"hostname":"DESKTOP-UDO3RQB","logLevel":"log","createdAt":"2024-11-09T19:03:38.964Z","createdBy":"remote-grpc.log","args":["remote-grpc fooClientService Execute",{"args":[{"data":"foo"}]}]}
@@ -277,16 +274,16 @@ module.exports = {
 {"level":30,"time":1731179018978,"pid":22292,"hostname":"DESKTOP-UDO3RQB","logLevel":"log","createdAt":"2024-11-09T19:03:38.978Z","createdBy":"remote-grpc.log","args":["remote-grpc protoService makeServer method succeed requestId=7x63h",{"request":{"data":"foo"},"result":{"data":"ok"}}]}
 ```
 
-Логи пишутся с ротацией. Когда файл `debug.log` достигнет лимита 100Mb, он будет сжат в `20241003-1132-01-debug.log.gz`. Дополнительно, можете писать свои логи, используя [pinolog](https://www.npmjs.com/package/pinolog)
+Logs are written with rotation. When the `debug.log` file reaches the 100Mb limit, it will be compressed into `20241003-1132-01-debug.log.gz`. Additionally, you can write your own logs using [pinolog](https://www.npmjs.com/package/pinolog).
 
-## Упрощаем документирование
+## Simplifying Documentation
 
-Разработка предполагает использование [функционального программирования](https://en.wikipedia.org/wiki/MapReduce) в `host` приложениях и объектно ориентированного по [SOLID](https://en.wikipedia.org/wiki/SOLID) в сервисах и общем коде. Как следствие
+Development involves using [functional programming](https://en.wikipedia.org/wiki/MapReduce) in `host` applications and object-oriented programming following [SOLID](https://en.wikipedia.org/wiki/SOLID) principles in services and common code. As a result:
 
-1. **Код на классах**
-2. **Есть инъекция зависимостей**
+1. **Code is in classes**
+2. **There is dependency injection**
 
-Файлы `rollup.config.mjs` создают [types.d.ts](modules/remote-grpc/types.d.ts), содержащие объявления классов. Из них генерируется [API Reference](https://github.com/react-declarative/react-declarative/blob/master/docs/auto/interfaces/IQuery.md) в формате markdown. Далее, файлы markdown попадают в нейронку [Nous-Hermes-2-Mistral-7B-DPO](./scripts/gpt-docs.mjs), которая возвращает результат в читаемом человеком виде
+The `rollup.config.mjs` files create [types.d.ts](modules/remote-grpc/types.d.ts), containing class declarations. From these, [API Reference](https://github.com/react-declarative/react-declarative/blob/master/docs/auto/interfaces/IQuery.md) is generated in markdown format. Then, the markdown files are processed by the [Nous-Hermes-2-Mistral-7B-DPO](./scripts/gpt-docs.mjs) neural network, which returns the result in human-readable form.
 
 ```md
 # remote-grpc
@@ -318,11 +315,11 @@ Overall, `FooClientService` is a class that provides methods to interact with a 
 
 ```
 
-Да, верно, автоматическая генерация документации через [CI/CD](https://en.wikipedia.org/wiki/CI/CD). ~~Меняем промпт и видим, соответствует ли класс SOLID~~
+Automatic documentation generation through [CI/CD](https://en.wikipedia.org/wiki/CI/CD). ~~Change the prompt and see if the class corresponds to SOLID~~
 
-## С чего начать разработку
+## How to Start Development
 
-Настройте окружение
+Set up the environment
 
 ```bash
 cp .env.example .env
@@ -330,7 +327,7 @@ npm install
 npm start
 ```
 
-Откройте файл [modules/remote-grpc/src/config/params.ts](modules/remote-grpc/src/config/params.ts). Добавьте микросервис, придумав, какой порт он будет занимать. 
+Open the file [modules/remote-grpc/src/config/params.ts](modules/remote-grpc/src/config/params.ts). Add a microservice, deciding which port it will occupy.
 
 ```tsx
 export const CC_GRPC_MAP = {
@@ -341,19 +338,18 @@ export const CC_GRPC_MAP = {
             "Execute",
         ],
     },
-    // Сюда
+    // Add here
 ...
-
 ```
 
-Далее следуя паттерну Dependency injection добавьте тип сервиса в [modules/remote-grpc/src/config/types.ts](modules/remote-grpc/src/config/types.ts), инстанс сервиса в [modules/remote-grpc/src/config/provide.ts](modules/remote-grpc/src/config/provide.ts), и инъекцию в [modules/remote-grpc/src/services/client](modules/remote-grpc/src/services/client).
+Then, following the Dependency Injection pattern, add the service type in [modules/remote-grpc/src/config/types.ts](modules/remote-grpc/src/config/types.ts), the service instance in [modules/remote-grpc/src/config/provide.ts](modules/remote-grpc/src/config/provide.ts), and the injection in [modules/remote-grpc/src/services/client](modules/remote-grpc/src/services/client).
 
 ```tsx
 const clientServices = {
     fooClientService: inject<FooClientService>(TYPES.fooClientService),
     barClientService: inject<BarClientService>(TYPES.barClientService),
     bazClientService: inject<BazClientService>(TYPES.bazClientService),
-    // Сюда
+    // Add here
 };
 
 init();
@@ -362,9 +358,8 @@ export const grpc = {
     ...baseServices,
     ...clientServices,
 };
-
 ```
 
-Далее, скопируйте папку [services/foo-service](services/foo-service) и на её основе пропишите логику. Взаимодействие с базой нужно вынести в [modules/remote-db](modules/remote-db) по этому же принципу. Не забывайте про логирование в LoggerService, каждый метод `view` слоя должен записать в лог имя сервиса, имя метода и аргументы
+Next, copy the [services/foo-service](services/foo-service) folder and use it as a base to implement your logic. Database interactions should be moved to [modules/remote-db](modules/remote-db) following the same principle. Don't forget about logging in LoggerService - each `view` layer method should log the service name, method name, and arguments.
 
-## Спасибо за внимание!
+## Thank you for your attention!
