@@ -18,7 +18,9 @@ In the future, there should be an option to rewrite high-load code segments in a
 
 2. **Router as an anti-pattern in microservice architecture**
 
-Using the router pattern to navigate microservice calls will result in forking the project in the corporate Gitlab to create microservice groups where the code of some services will be copy-pasted.
+Using the router pattern to navigate microservice calls will result in forking the project in the corporate Gitlab to create microservice groups where the code of some services will be copy-pasted. 
+
+Also, the gRPC way is decentralized. By using It will avoid bottleneck in performance
 
 3. **Useless yum validations**
 
