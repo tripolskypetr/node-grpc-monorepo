@@ -7,10 +7,12 @@ import FooClientService from '../services/client/FooClientService';
 import BarClientService from '../services/client/BarClientService';
 import BazClientService from '../services/client/BazClientService';
 import LoggerService from '../services/base/LoggerService';
+import ErrorService from '../services/base/ErrorService';
 
 {
     provide(TYPES.protoService, () => new ProtoService());
     provide(TYPES.loggerService, () => new LoggerService());
+    provide(TYPES.errorService, () => new ErrorService());
 }
 
 {

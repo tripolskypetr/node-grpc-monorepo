@@ -6,10 +6,12 @@ import type AppwriteService from "./services/base/AppwriteService";
 import TodoViewService from "./services/view/TodoViewService";
 import TodoDbService from "./services/db/TodoDbService";
 import TodoRequestService from "./services/helper/TodoRequestService";
+import ErrorService from "./services/base/ErrorService";
 
 const baseServices = {
     loggerService: inject<LoggerService>(TYPES.loggerService),
     appwriteService: inject<AppwriteService>(TYPES.appwriteService),
+    errorService: inject<ErrorService>(TYPES.errorService),
 };
 
 const viewServices = {

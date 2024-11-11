@@ -60,12 +60,19 @@ declare class FooClientService implements GRPC.IFooService {
     protected init: () => void;
 }
 
+declare class ErrorService {
+    handleGlobalError: (error: Error) => never;
+    private _listenForError;
+    protected init: () => void;
+}
+
 declare const grpc: {
     fooClientService: FooClientService;
     barClientService: BarClientService;
     bazClientService: BazClientService;
     protoService: ProtoService;
     loggerService: LoggerService;
+    errorService: ErrorService;
 };
 
 export { grpc };

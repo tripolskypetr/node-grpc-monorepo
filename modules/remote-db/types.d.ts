@@ -59,12 +59,19 @@ declare class TodoRequestService {
     getTodoCount: (() => Promise<number>) & functools_kit.IClearableTtl<string> & functools_kit.IControlMemoize<string, Promise<number>>;
 }
 
+declare class ErrorService {
+    handleGlobalError: (error: Error) => never;
+    private _listenForError;
+    protected init: () => void;
+}
+
 declare const db: {
     todoRequestService: TodoRequestService;
     todoDbService: TodoDbService;
     todoViewService: TodoViewService;
     loggerService: LoggerService;
     appwriteService: AppwriteService;
+    errorService: ErrorService;
 };
 
 export { db };

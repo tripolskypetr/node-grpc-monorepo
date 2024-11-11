@@ -1,6 +1,7 @@
 const baseServices = {
     loggerService: Symbol('loggerService'),
     appwriteService: Symbol('appwriteService'),
+    errorService: Symbol.for('errorService'),
 };
 
 const viewServices = {

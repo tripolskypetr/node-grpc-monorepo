@@ -1,4 +1,5 @@
 import { grpc } from "@modules/remote-grpc";
+import { db } from "@modules/remote-db";
 import micro from "micro";
 import http from "http";
 import Router from "router";
@@ -27,6 +28,10 @@ router.get("/api/v1/baz", async (req, res) => {
   return micro.send(res, 200, output);
 });
 
+router.get("/api/v1/todo_count", async (req, res) => {
+  const output = await db.todoRequestService.getTodoCount();
+  return micro.send(res, 200, output);
+});
 
 router.get("/*", (req, res) => serveHandler(req, res, {
   public: "./public",
@@ -48,4 +53,6 @@ const server = new http.Server(
 );
 
 server.listen(50050);
+
 grpc.loggerService.setPrefix("host-main");
+db.loggerService.setPrefix("host-main");
