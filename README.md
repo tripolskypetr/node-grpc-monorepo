@@ -20,11 +20,17 @@ In the future, there should be an option to rewrite high-load code segments in a
 
 Using the router pattern to navigate microservice calls will result in forking the project in the corporate Gitlab to create microservice groups where the code of some services will be copy-pasted. 
 
-Also, the gRPC way is decentralized. Using It will avoid bottleneck in performance
-
 3. **Useless yum validations**
 
 Similar to `prop-types` in React, the preferred way to declare a contract is through `interface` of arguments, cause declaratively described static type checking at compile time is significantly easier to port to another programming language
+
+4. **Partial restart of backend application**
+
+The gRPC way is decentralized. Cause there is no single entry poit using It will avoid bottleneck in performance. For example, If the main tRPC server is down you have to restart all microservices. In gRPC, the host application and all services could be restated separately. Also you can use [YAML Engineer](https://www.envoyproxy.io/) to declare strategy of proxying requests such as [retry policy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing.html#arch-overview-http-routing-retry)
+
+5. **The class method mapping instead of remote procedures**
+
+When you working with tRPC, you will use switch-case in remote procedure to map the class method by using table function with action type. This is unnecessary boilerplate, easier to provide class instance for method mapping and keep the mapping automatic
 
 ## Problems Solved
 
