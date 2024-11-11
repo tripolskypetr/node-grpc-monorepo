@@ -30,7 +30,7 @@ The gRPC way is decentralized. Cause there is no single entry poit using It will
 
 5. **The class method mapping instead of remote procedures**
 
-When you working with tRPC, you will use switch-case in remote procedure to map the class method by using table function with action type. This is unnecessary boilerplate, easier to provide class instance for method mapping and keep the mapping automatic
+When you working with tRPC, you will use switch-case in remote procedure to map the class method by using table function with action type. This is unnecessary boilerplate, easier to provide class instance for method mapping and keep the process automatic
 
 ## Problems Solved
 
