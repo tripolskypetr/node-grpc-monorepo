@@ -20,9 +20,9 @@ In the future, there should be an option to rewrite high-load code segments in a
 
 Using the router pattern to route microservice calls will result in forking the project in the corporate Gitlab to create microservice groups where some services will be copy-pasted.
 
-3. **Useless yum validations** Similar to `prop-types` in React, the preferred way to declare a contract is through argument `interface`, as declaratively described static type checking at compile time is significantly easier to port to another programming language
+3. **Useless yum validations**
 
-Note: I assume "yum" in the original text might be a typo or specific term, so I preserved it in the translation. Let me know if you'd like any clarification or adjustments to the translation.
+Similar to `prop-types` in React, the preferred way to declare a contract is through argument `interface`, as declaratively described static type checking at compile time is significantly easier to port to another programming language
 
 ## Problems Solved
 
