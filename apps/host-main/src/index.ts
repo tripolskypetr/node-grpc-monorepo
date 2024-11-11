@@ -18,13 +18,13 @@ router.get("/api/v1/foo", async (req, res) => {
 });
 
 router.get("/api/v1/bar", async (req, res) => {
-  const output = await grpc.fooClientService.Execute({ data: "bar" });
+  const output = await grpc.barClientService.Execute({ data: "bar" });
   return micro.send(res, 200, output);
 });
 
 
 router.get("/api/v1/baz", async (req, res) => {
-  const output = await grpc.fooClientService.Execute({ data: "baz" });
+  const output = await grpc.bazClientService.Execute({ data: "baz" });
   return micro.send(res, 200, output);
 });
 
