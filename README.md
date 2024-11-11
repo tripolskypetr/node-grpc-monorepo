@@ -10,6 +10,20 @@ Large applications are written in Domain Driven Design. A special case of this a
 
 To solve the problem of procedural code in microservices, a starter kit for a scalable NodeJS microservice in a monorepo was developed.
 
+## Why not tRPC
+
+1. **Need to maintain the ability to write services in Golang** 
+
+In the future, there should be an option to rewrite high-load code segments in a compiled language like `golang`, which tRPC doesn't allow
+
+2. **Router as an anti-pattern in microservice architecture**
+
+Using the router pattern to route microservice calls will result in forking the project in the corporate Gitlab to create microservice groups where some services will be copy-pasted.
+
+3. **Useless yum validations** Similar to `prop-types` in React, the preferred way to declare a contract is through argument `interface`, as declaratively described static type checking at compile time is significantly easier to port to another programming language
+
+Note: I assume "yum" in the original text might be a typo or specific term, so I preserved it in the translation. Let me know if you'd like any clarification or adjustments to the translation.
+
 ## Problems Solved
 
 1. **Working with gRPC through TypeScript**
