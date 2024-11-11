@@ -22,7 +22,7 @@ Using the router pattern to navigate microservice calls will result in forking t
 
 3. **Useless yum validations**
 
-Similar to `prop-types` in React, the preferred way to declare a contract is through `interface` of arguments,cause declaratively described static type checking at compile time is significantly easier to port to another programming language
+Similar to `prop-types` in React, the preferred way to declare a contract is through `interface` of arguments, cause declaratively described static type checking at compile time is significantly easier to port to another programming language
 
 ## Problems Solved
 
