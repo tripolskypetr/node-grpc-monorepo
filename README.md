@@ -26,7 +26,7 @@ Similar to `prop-types` in React, the preferred way to declare a contract is thr
 
 4. **Partial restart of backend application**
 
-The gRPC way is decentralized. Cause there is no single entry poit using It will avoid bottleneck in performance. For example, If the main tRPC server is down you have to restart all microservices. In gRPC, the host application and all services could be restated separately. Also you can use [YAML Engineer](https://www.envoyproxy.io/) to declare strategy of proxying requests such as [retry policy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing.html#arch-overview-http-routing-retry)
+The gRPC way is decentralized. Cause there is no single entry point using It will avoid bottleneck in performance. For example, If the main tRPC server is down you have to restart all microservices. In gRPC, the host application and all services could be restated separately. Also you can use [YAML Engineer](https://www.envoyproxy.io/) to declare strategy of proxying requests such as [retry policy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing.html#arch-overview-http-routing-retry)
 
 5. **The class method mapping instead of remote procedures**
 
