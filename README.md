@@ -1,6 +1,6 @@
 # 🔥 node-grpc-monorepo
 
-> A TypeScript-gRPC monorepo starter kit that simplifies microservices development using OOP principles. Features typed gRPC communication, PM2 process management, unified database operations in single responsibility module, easy debugging without Docker, and automated SOLID code analysis with AI-powered documentation.
+> The TypeScript-gRPC monorepo starter kit that simplifies microservices development using OOP principles. Features typed gRPC communication, PM2 process management, unified database operations in single responsibility module, easy debugging without Docker, and automated SOLID code analysis with AI-powered documentation.
 
 ![meme](./meme.png)
 
