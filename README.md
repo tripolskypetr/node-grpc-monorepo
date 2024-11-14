@@ -388,4 +388,29 @@ Next, copy the [services/foo-service](services/foo-service) folder and use it as
 
 This starter kit provides [scoped services similar to ASP.Net Core](https://henriquesd.medium.com/dependency-injection-and-service-lifetimes-in-net-core-ab9189349420). Check the `ScopedService` in [modules/remote-db](./modules/remote-db/src/services/sample/ScopedService.ts)
 
+```tsx
+export class MockApiService {
+
+    readonly scopedService = inject<TScopedService>(TYPES.scopedService);
+
+    fetchDataSample = () => {
+        console.log("Mocking request to example api...");
+        return {
+            'Authentication': `Bearer ${this.scopedService.getJwt()}`,
+        }
+    }
+
+}
+
+...
+
+router.get("/api/v1/jwt", async (req, res) => {
+    const output = await ScopedService.runInContext(async () => {
+        return await db.mockApiService.fetchDataSample(); // {"Authentication":"Bearer example-jwt"}
+    }, "example-jwt");
+    return micro.send(res, 200, output);
+});
+
+```
+
 ## Thank you for your attention!
