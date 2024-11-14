@@ -384,4 +384,8 @@ export const grpc = {
 
 Next, copy the [services/foo-service](services/foo-service) folder and use it as a base to implement your logic. Database interactions should be moved to [modules/remote-db](modules/remote-db) following the same principle. Don't forget about logging in LoggerService - each `view` layer method should log the service name, method name, and arguments.
 
+## See also
+
+This starter kit provides [scoped services similar to ASP.Net Core](https://henriquesd.medium.com/dependency-injection-and-service-lifetimes-in-net-core-ab9189349420). Check the `ScopedService` in [modules/remote-db](./modules/remote-db/src/services/sample/ScopedService.ts)
+
 ## Thank you for your attention!

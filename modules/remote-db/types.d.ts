@@ -1,5 +1,6 @@
 import { Client, Storage, Databases, Models } from 'node-appwrite';
 import * as functools_kit from 'functools-kit';
+import * as di_scoped from 'di-scoped';
 
 declare class LoggerService {
     private _logger;
@@ -65,7 +66,36 @@ declare class ErrorService {
     protected init: () => void;
 }
 
+declare const ScopedService: (new () => {
+    jwt: string;
+    setJwt: (jwt: string) => void;
+    getJwt: () => string;
+}) & Omit<{
+    new (jwt: string): {
+        jwt: string;
+        setJwt: (jwt: string) => void;
+        getJwt: () => string;
+    };
+}, "prototype"> & di_scoped.IScopedClassRun<[jwt: string]>;
+
+declare class MockApiService {
+    readonly scopedService: {
+        jwt: string;
+        setJwt: (jwt: string) => void;
+        getJwt: () => string;
+    };
+    fetchDataSample: () => {
+        Authentication: string;
+    };
+}
+
 declare const db: {
+    scopedService: {
+        jwt: string;
+        setJwt: (jwt: string) => void;
+        getJwt: () => string;
+    };
+    mockApiService: MockApiService;
     todoRequestService: TodoRequestService;
     todoDbService: TodoDbService;
     todoViewService: TodoViewService;
@@ -74,4 +104,4 @@ declare const db: {
     errorService: ErrorService;
 };
 
-export { db };
+export { ScopedService, db };

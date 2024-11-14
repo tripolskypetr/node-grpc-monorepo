@@ -16,11 +16,17 @@ const requestServices = {
     todoRequestService: Symbol('todoRequestService'),
 };
 
+const sampleServices = {
+    scopedService: Symbol.for('scopedService'),
+    mockApiService: Symbol.for('mockApiService'),
+};
+
 export const TYPES = {
     ...baseServices,
     ...viewServices,
     ...dbServices,
     ...requestServices,
+    ...sampleServices,
 };
 
 export default TYPES;

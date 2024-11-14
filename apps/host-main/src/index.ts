@@ -1,5 +1,5 @@
 import { grpc } from "@modules/remote-grpc";
-import { db } from "@modules/remote-db";
+import { db, ScopedService } from "@modules/remote-db";
 import micro from "micro";
 import http from "http";
 import Router from "router";
@@ -32,6 +32,14 @@ router.get("/api/v1/todo_count", async (req, res) => {
   const output = await db.todoRequestService.getTodoCount();
   return micro.send(res, 200, output);
 });
+
+router.get("/api/v1/jwt", async (req, res) => {
+  const output = await ScopedService.runInContext(async () => {
+    return await db.mockApiService.fetchDataSample();
+  }, "example-jwt");
+  return micro.send(res, 200, output);
+});
+
 
 router.get("/*", (req, res) => serveHandler(req, res, {
   public: "./public",
