@@ -8,7 +8,6 @@
     "build": "rollup -c"
   },
   "devDependencies": {
-    "@types/microrouter": "3.1.6",
     "@types/serve-handler": "6.1.4",
     "@types/finalhandler": "1.2.3"
   },
@@ -17,7 +16,6 @@
     "@modules/remote-db": "*",
     "finalhandler": "1.3.1",
     "micro": "10.0.1",
-    "microrouter": "3.1.3",
     "router": "1.3.8",
     "serve-handler": "6.1.6"
   }
