@@ -48,7 +48,7 @@ For database operations, it's better to use the onion architecture Model View Pr
 
 4. **Executing Microservice Methods without Postman**
 
-Host applications that interact with services via gRPC are located in the `apps` folder. Two applications were created: `apps/host-main` and `apps/host-test`, the first with a web server, in the second you can write arbitrary code and run it with the `npm run test` command. Also, in `apps/host-test` you can write unit tests if you need to do test-driven development. Also you can type `npm run repl` to open [Read–eval–print loop](https://en.wikipedia.org/wiki/Read–eval–print_loop) with exposed grpc services
+Host applications that interact with services via gRPC are located in the `apps` folder. Two applications were created: `apps/host-main` and `apps/host-test`, the first with a web server, in the second you can write arbitrary code and run it with the `npm run test` command. Also, in `apps/host-test` you can write unit tests if you need to do test-driven development. Another way of executing microservices is to type `npm run repl` to open [Read–eval–print loop](https://en.wikipedia.org/wiki/Read–eval–print_loop) with exposed grpc services
 
 5. **Automatic Detection of non-SOLID Code Using Language Models**
 
