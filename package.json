@@ -2,6 +2,7 @@
     "name": "node-grpc-monorepo",
     "private": true,
     "scripts": {
+        "repl": "npm run build && node -e \"import('./scripts/repl.mjs')\" --interactive",
         "test": "cd apps/host-test && npm start",
         "start": "npm run pm2:stop && npm run build && npm run pm2:start",
         "pm2:start": "pm2 start ./config/ecosystem.config.js",
