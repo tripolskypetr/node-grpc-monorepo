@@ -19,7 +19,7 @@
     "@grpc/proto-loader": "0.7.13",
     "di-kit": "1.0.11",
     "functools-kit": "1.0.14",
-    "di-scoped": "1.0.6",
+    "di-scoped": "1.0.8",
     "node-appwrite": "14.1.0",
     "pinolog": "1.0.2",
     "uuid": "11.0.2"
