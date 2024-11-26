@@ -18,7 +18,7 @@
     "@grpc/grpc-js": "1.12.2",
     "@grpc/proto-loader": "0.7.13",
     "di-kit": "1.0.11",
-    "functools-kit": "1.0.18",
+    "functools-kit": "1.0.26",
     "di-scoped": "1.0.8",
     "node-appwrite": "14.1.0",
     "pinolog": "1.0.2",

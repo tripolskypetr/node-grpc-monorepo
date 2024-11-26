@@ -6,6 +6,8 @@ import * as protoLoader from "@grpc/proto-loader";
 
 import { randomString } from 'functools-kit';
 
+import Long from 'long';
+
 import { get } from "../../utils/get";
 
 import { CC_GRPC_MAP, CC_GRPC_PROTO_PATH } from "../../config/params";
@@ -15,6 +17,22 @@ import type LoggerService from "./LoggerService";
 import TYPES from "../../config/types";
 
 const GRPC_READY_DELAY = 15_000;
+
+function convertLongsToNumbers(obj: { [key: string]: any }): { [key: string]: any } {
+  return Object.keys(obj).reduce((result: { [key: string]: any }, key: string) => {
+    const value = obj[key];
+
+    if (Long.isLong(value)) {
+      result[key] = value.toNumber();
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = convertLongsToNumbers(value);
+    } else {
+      result[key] = value;
+    }
+
+    return result;
+  }, {});
+}
 
 const readProto = (name: string) => {
   const absolutePath = resolve(join(CC_GRPC_PROTO_PATH, `${name}.proto`));
@@ -106,7 +124,7 @@ export class ProtoService {
           const requestId = randomString();
           this.loggerService.log(`remote-grpc protoService makeServer executing method service=${serviceName} method=${cur} requestId=${requestId}`, { request: call.request });
           try {
-            const result = await executor(call.request);
+            const result = await executor(convertLongsToNumbers(call.request));
             this.loggerService.log(`remote-grpc protoService makeServer method succeed requestId=${requestId}`, { request: call.request, result });
             callback(null, result || {});
           } catch (error) {
