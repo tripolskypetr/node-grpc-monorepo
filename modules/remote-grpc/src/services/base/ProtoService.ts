@@ -100,7 +100,7 @@ export class ProtoService {
               this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur} requestId=${requestId}`, { request });
               const result = await grpcMethod(request);
               this.loggerService.log(`remote-grpc protoService makeClient succeed service=${serviceName} method=${cur} requestId=${requestId}`, { request, result });
-              return result;
+              return convertLongsToNumbers(result as object);
             } catch (error) {
               this.loggerService.log(`remote-grpc protoService makeClient failed service=${serviceName} method=${cur} requestId=${requestId}`, { request, error });
               throw error;
