@@ -18,18 +18,26 @@ import TYPES from "../../config/types";
 
 const GRPC_READY_DELAY = 15_000;
 
-function convertLongsToNumbers(obj: { [key: string]: any }): { [key: string]: any } {
-  return Object.keys(obj).reduce((result: { [key: string]: any }, key: string) => {
-    const value = obj[key];
-
+function processObject(obj: { [key: string]: any }): { [key: string]: any } {
+  function processValue(value: any): any {
     if (Long.isLong(value)) {
-      result[key] = value.toNumber();
+      return value.toNumber();
+    } else if (value instanceof Date) {
+      return value.toISOString(); // or value.getTime() for timestamp
+    } else if (Array.isArray(value)) {
+      return value.map(processValue); // Process each array item
     } else if (typeof value === 'object' && value !== null) {
-      result[key] = convertLongsToNumbers(value);
+      return Object.keys(value).length === 0 ? undefined : processObject(value); // Recursively process objects, replace empty objects with null
     } else {
-      result[key] = value;
+      return value; // Return other values as-is
     }
+  }
 
+  return Object.keys(obj).reduce((result: { [key: string]: any }, key: string) => {
+    const value = processValue(obj[key]);
+    if (value !== undefined) {
+      result[key] = value; // Process each key's value
+    }
     return result;
   }, {});
 }
@@ -100,7 +108,7 @@ export class ProtoService {
               this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur} requestId=${requestId}`, { request });
               const result = await grpcMethod(request);
               this.loggerService.log(`remote-grpc protoService makeClient succeed service=${serviceName} method=${cur} requestId=${requestId}`, { request, result });
-              return convertLongsToNumbers(result as object);
+              return processObject(result as object);
             } catch (error) {
               this.loggerService.log(`remote-grpc protoService makeClient failed service=${serviceName} method=${cur} requestId=${requestId}`, { request, error });
               throw error;
@@ -124,7 +132,7 @@ export class ProtoService {
           const requestId = randomString();
           this.loggerService.log(`remote-grpc protoService makeServer executing method service=${serviceName} method=${cur} requestId=${requestId}`, { request: call.request });
           try {
-            const result = await executor(convertLongsToNumbers(call.request));
+            const result = await executor(processObject(call.request));
             this.loggerService.log(`remote-grpc protoService makeServer method succeed requestId=${requestId}`, { request: call.request, result });
             callback(null, result || {});
           } catch (error) {
