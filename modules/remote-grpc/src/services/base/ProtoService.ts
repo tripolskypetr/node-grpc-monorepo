@@ -46,7 +46,13 @@ const readProto = (name: string) => {
   const absolutePath = resolve(join(CC_GRPC_PROTO_PATH, `${name}.proto`));
   console.log(`Using proto ${absolutePath}`);
   const packageDefinition = protoLoader.loadSync(
-    absolutePath
+    absolutePath,
+    {
+      keepCase: true,
+      enums: String,
+      arrays: true,
+      defaults: true,
+    }
   );
   return grpc.loadPackageDefinition(packageDefinition);
 };
