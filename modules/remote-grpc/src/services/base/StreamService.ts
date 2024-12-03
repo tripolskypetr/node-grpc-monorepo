@@ -5,7 +5,7 @@ import TYPES from "src/config/types";
 import { CC_GRPC_MAP } from "src/config/params";
 import get from "src/utils/get";
 import * as grpc from "@grpc/grpc-js";
-import { errorData, Subject, createAwaiter, queued, CANCELED_PROMISE_SYMBOL, singleshot } from "functools-kit";
+import { errorData, Subject, createAwaiter, queued, CANCELED_PROMISE_SYMBOL, singleshot, sleep } from "functools-kit";
 
 type Ctor = new (...args: any[]) => grpc.Client;
 type ServiceName = keyof typeof CC_GRPC_MAP;
@@ -21,6 +21,7 @@ interface IMessage<Data = object> {
 export type SendMessageFn<T = object> = (outgoing: IMessage<T>) => Promise<void | typeof CANCELED_PROMISE_SYMBOL>;
 
 const GRPC_READY_DELAY = 15_000;
+const MSG_SEND_DELAY = 250;
 
 interface IAwaiter {
     resolve(): void;
@@ -31,8 +32,8 @@ export class StreamService {
     private readonly protoService = inject<ProtoService>(TYPES.protoService);
     private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
 
-    _makeServerInternal = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, queue?: [IMessage, IAwaiter][]): SendMessageFn<any> => {
-        this.loggerService.log(`remote-grpc streamService _makeServerInternal connecting service=${serviceName}`);
+    _makeServerInternal = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]): SendMessageFn<any> => {
+        this.loggerService.log(`remote-grpc streamService _makeServerInternal connecting service=${serviceName} attempt=${attempt}`);
         const { grpcHost, protoName } = CC_GRPC_MAP[serviceName];
         const proto = this.protoService.loadProto(protoName);
 
@@ -65,7 +66,7 @@ export class StreamService {
                     reconnect(outgoingQueue, true);
                 });
                 {
-                    const emit = () => {
+                    const emit = async () => {
                         while (outgoingQueue.length) {
                             if (isClosed) {
                                 reconnect(outgoingQueue, true);
@@ -86,6 +87,8 @@ export class StreamService {
                                 outgoingQueue.push([outgoing, { resolve }]);
                                 reconnect(outgoingQueue, true);
                                 break;
+                            } finally {
+                                await sleep(MSG_SEND_DELAY)
                             }
                         }
                     };
@@ -109,8 +112,8 @@ export class StreamService {
         });
     };
 
-    _makeClientInternal = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, queue?: [IMessage, IAwaiter][]): SendMessageFn<any> => {
-        this.loggerService.log(`remote-grpc streamService _makeClientInternal connecting service=${serviceName}`);
+    _makeClientInternal = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]): SendMessageFn<any> => {
+        this.loggerService.log(`remote-grpc streamService _makeClientInternal connecting service=${serviceName} attempt=${attempt}`);
         const { grpcHost, protoName } = CC_GRPC_MAP[serviceName];
         const proto = this.protoService.loadProto(protoName);
         const Ctor = get(proto, serviceName) as unknown as Ctor;
@@ -145,7 +148,7 @@ export class StreamService {
                 reconnect(outgoingQueue, true);
             });
             {
-                const emit = () => {
+                const emit = async () => {
                     while (outgoingQueue.length) {
                         if (isClosed) {
                             reconnect(outgoingQueue, true);
@@ -166,6 +169,8 @@ export class StreamService {
                             outgoingQueue.push([outgoing, { resolve }]);
                             reconnect(outgoingQueue, true);
                             break;
+                        } finally {
+                            await sleep(MSG_SEND_DELAY);
                         }
                     }
                 };
@@ -185,8 +190,10 @@ export class StreamService {
     makeServer = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void): SendMessageFn<any> => {
         this.loggerService.log(`remote-grpc streamService makeServer connecting service=${serviceName}`);
         let outgoingRef: SendMessageFn<any> = () => Promise.resolve();
+        let attempt = 0;
         const makeConnection = (queue: [IMessage, IAwaiter][]) => {
-            outgoingRef = this._makeServerInternal(serviceName, connector, singleshot(makeConnection), queue);
+            attempt += 1;
+            outgoingRef = this._makeServerInternal(serviceName, connector, singleshot(makeConnection), attempt, queue);
         };
         makeConnection([]);
         return async (...args) => await outgoingRef(...args);
@@ -195,8 +202,10 @@ export class StreamService {
     makeClient = <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void): SendMessageFn<any> => {
         this.loggerService.log(`remote-grpc streamService makeClient connecting service=${serviceName}`);
         let outgoingRef: SendMessageFn<any> = () => Promise.resolve();
+        let attempt = 0;
         const makeConnection = (queue: [IMessage, IAwaiter][]) => {
-            outgoingRef = this._makeClientInternal(serviceName, connector, singleshot(makeConnection), queue);
+            attempt += 1;
+            outgoingRef = this._makeClientInternal(serviceName, connector, singleshot(makeConnection), attempt, queue);
         };
         makeConnection([]);
         return async (...args) => await outgoingRef(...args);
