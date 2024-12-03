@@ -1,4 +1,6 @@
 import * as grpc$1 from '@grpc/grpc-js';
+import { CC_GRPC_MAP as CC_GRPC_MAP$1 } from 'src/config/params';
+import { CANCELED_PROMISE_SYMBOL } from 'functools-kit';
 
 declare class LoggerService {
     private _logger;
@@ -24,7 +26,7 @@ declare const CC_GRPC_MAP: {
     };
 };
 
-type ServiceName = keyof typeof CC_GRPC_MAP;
+type ServiceName$1 = keyof typeof CC_GRPC_MAP;
 interface IService {
     [key: string | number | symbol]: Function;
 }
@@ -32,8 +34,8 @@ declare class ProtoService {
     private readonly loggerService;
     private readonly _protoMap;
     loadProto: (protoName: string) => grpc$1.GrpcObject;
-    makeClient: <T = IService>(serviceName: ServiceName) => T;
-    makeServer: <T = IService>(serviceName: ServiceName, connector: T) => void;
+    makeClient: <T = IService>(serviceName: ServiceName$1) => T;
+    makeServer: <T = IService>(serviceName: ServiceName$1, connector: T) => void;
 }
 
 declare class BarClientService implements GRPC.IBarService {
@@ -66,6 +68,27 @@ declare class ErrorService {
     protected init: () => void;
 }
 
+type ServiceName = keyof typeof CC_GRPC_MAP$1;
+interface IMessage<Data = object> {
+    serviceName: string;
+    clientId: string;
+    userId: string;
+    requestId: string;
+    data: Data;
+}
+type SendMessageFn<T = object> = (outgoing: IMessage<T>) => Promise<void | typeof CANCELED_PROMISE_SYMBOL>;
+interface IAwaiter {
+    resolve(): void;
+}
+declare class StreamService {
+    private readonly protoService;
+    private readonly loggerService;
+    _makeServerInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
+    _makeClientInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
+    makeServer: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void) => SendMessageFn<any>;
+    makeClient: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void) => SendMessageFn<any>;
+}
+
 declare const grpc: {
     fooClientService: FooClientService;
     barClientService: BarClientService;
@@ -73,6 +96,7 @@ declare const grpc: {
     protoService: ProtoService;
     loggerService: LoggerService;
     errorService: ErrorService;
+    streamService: StreamService;
 };
 
 export { grpc };
