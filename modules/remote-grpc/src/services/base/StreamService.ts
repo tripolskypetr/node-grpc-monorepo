@@ -33,7 +33,7 @@ export type SendMessageFn<T = object> = (
   outgoing: IMessage<T>
 ) => Promise<void | typeof CANCELED_PROMISE_SYMBOL>;
 
-const GRPC_READY_DELAY = 15_000;
+const GRPC_READY_DELAY = 60_000;
 
 interface IAwaiter {
   resolve(): void;
@@ -45,7 +45,7 @@ export class StreamService {
 
   _makeServerInternal = <T = object>(
     serviceName: ServiceName,
-    connector: (incoming: IMessage<T>) => void,
+    connector: (incoming: IMessage<T>) => Promise<void>,
     reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void,
     attempt: number,
     queue?: [IMessage, IAwaiter][]
@@ -182,7 +182,7 @@ export class StreamService {
 
   _makeClientInternal = <T = object>(
     serviceName: ServiceName,
-    connector: (incoming: IMessage<T>) => void,
+    connector: (incoming: IMessage<T>) => Promise<void>,
     reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void,
     attempt: number,
     queue?: [IMessage, IAwaiter][]
@@ -308,18 +308,19 @@ export class StreamService {
 
   makeServer = <T = object>(
     serviceName: ServiceName,
-    connector: (incoming: IMessage<T>) => void
+    connector: (incoming: IMessage<T>) => Promise<void>
   ): SendMessageFn<any> => {
     this.loggerService.log(
       `remote-grpc streamService makeServer connecting service=${serviceName}`
     );
     let outgoingRef: SendMessageFn<any> = () => Promise.resolve();
     let attempt = 0;
+    const connectorFn = queued(connector);
     const makeConnection = (queue: [IMessage, IAwaiter][]) => {
       attempt += 1;
-      outgoingRef = this._makeServerInternal(
+      outgoingRef = this._makeServerInternal<T>(
         serviceName,
-        connector,
+        async (...args) => { await connectorFn(...args) },
         singleshot(makeConnection),
         attempt,
         queue
@@ -331,18 +332,19 @@ export class StreamService {
 
   makeClient = <T = object>(
     serviceName: ServiceName,
-    connector: (incoming: IMessage<T>) => void
+    connector: (incoming: IMessage<T>) => Promise<void>
   ): SendMessageFn<any> => {
     this.loggerService.log(
       `remote-grpc streamService makeClient connecting service=${serviceName}`
     );
     let outgoingRef: SendMessageFn<any> = () => Promise.resolve();
     let attempt = 0;
+    const connectorFn = queued(connector);
     const makeConnection = (queue: [IMessage, IAwaiter][]) => {
       attempt += 1;
-      outgoingRef = this._makeClientInternal(
+      outgoingRef = this._makeClientInternal<T>(
         serviceName,
-        connector,
+        async (...args) => { await connectorFn(...args) },
         singleshot(makeConnection),
         attempt,
         queue

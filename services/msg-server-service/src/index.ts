@@ -1,4 +1,5 @@
 import { grpc } from "@modules/remote-grpc";
+import { sleep } from 'functools-kit';
 
 function getSecondsSinceMidnight() {
     const now = new Date();
@@ -8,8 +9,9 @@ function getSecondsSinceMidnight() {
     return secondsSinceMidnight;
 }
 
-const send = grpc.streamService.makeServer<{ side: string, value: string }>("MessageService", (message) => {
+const send = grpc.streamService.makeServer<{ side: string, value: string }>("MessageService", async (message) => {
     console.log(`${message.data.side} ${message.data.value}`)
+    await sleep(250);
 });
 
 setInterval(() => {

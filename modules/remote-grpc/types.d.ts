@@ -64,10 +64,10 @@ interface IAwaiter {
 declare class StreamService {
     private readonly protoService;
     private readonly loggerService;
-    _makeServerInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
-    _makeClientInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
-    makeServer: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void) => SendMessageFn<any>;
-    makeClient: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => void) => SendMessageFn<any>;
+    _makeServerInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => Promise<void>, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
+    _makeClientInternal: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => Promise<void>, reconnect: (queue: [IMessage, IAwaiter][], error: boolean) => void, attempt: number, queue?: [IMessage, IAwaiter][]) => SendMessageFn<any>;
+    makeServer: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => Promise<void>) => SendMessageFn<any>;
+    makeClient: <T = object>(serviceName: ServiceName, connector: (incoming: IMessage<T>) => Promise<void>) => SendMessageFn<any>;
 }
 
 declare const grpc: {
