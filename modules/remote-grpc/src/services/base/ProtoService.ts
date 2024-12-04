@@ -1,4 +1,4 @@
-import { join, resolve } from "path";
+timport { join, resolve } from "path";
 import { inject } from "../../core/di";
 
 import * as grpc from "@grpc/grpc-js";
@@ -99,7 +99,12 @@ export class ProtoService {
     grpcClient.waitForReady(Date.now() + GRPC_READY_DELAY, (err: Error) => {
       if (err) {
         this.loggerService.log(`remote-grpc protoService failed to connect to ${serviceName} due to timeout`);
-        throw err;
+        throw new class extends Error {
+          constructor() {
+            super(`Failed to connect to server ${serviceName}, host=${grpcHost}`)
+          }
+          originalError = errorData(err);
+        }
       }
     });
   
