@@ -20,6 +20,13 @@ export const CC_GRPC_MAP = {
             "Execute",
         ],
     },
+    "MessageService": {
+        grpcHost: "localhost:50054",
+        protoName: "message_service",
+        methodList: [
+            "connect",
+        ],
+    },
 } as const;
 
 export const CC_GRPC_PROTO_PATH = process.env.CC_GRPC_PROTO_PATH || "./proto";

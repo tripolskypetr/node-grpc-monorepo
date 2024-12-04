@@ -24,6 +24,11 @@ declare const CC_GRPC_MAP: {
         readonly protoName: "baz_service";
         readonly methodList: readonly ["Execute"];
     };
+    readonly MessageService: {
+        readonly grpcHost: "localhost:50054";
+        readonly protoName: "message_service";
+        readonly methodList: readonly ["connect"];
+    };
 };
 
 type ServiceName$1 = keyof typeof CC_GRPC_MAP;
@@ -36,30 +41,6 @@ declare class ProtoService {
     loadProto: (protoName: string) => grpc$1.GrpcObject;
     makeClient: <T = IService>(serviceName: ServiceName$1) => T;
     makeServer: <T = IService>(serviceName: ServiceName$1, connector: T) => void;
-}
-
-declare class BarClientService implements GRPC.IBarService {
-    private readonly protoService;
-    private readonly loggerService;
-    private _barClient;
-    Execute: (...args: any) => Promise<any>;
-    protected init: () => void;
-}
-
-declare class BazClientService implements GRPC.IBazService {
-    private readonly protoService;
-    private readonly loggerService;
-    private _bazClient;
-    Execute: (...args: any) => Promise<any>;
-    protected init: () => void;
-}
-
-declare class FooClientService implements GRPC.IFooService {
-    private readonly protoService;
-    private readonly loggerService;
-    private _fooClient;
-    Execute: (...args: any) => Promise<any>;
-    protected init: () => void;
 }
 
 declare class ErrorService {
@@ -90,9 +71,27 @@ declare class StreamService {
 }
 
 declare const grpc: {
-    fooClientService: FooClientService;
-    barClientService: BarClientService;
-    bazClientService: BazClientService;
+    fooClientService: {
+        readonly protoService: ProtoService;
+        readonly loggerService: LoggerService;
+        _fooClient: GRPC.IFooService;
+        Execute: (...args: any) => Promise<any>;
+        init: () => void;
+    };
+    barClientService: {
+        readonly protoService: ProtoService;
+        readonly loggerService: LoggerService;
+        _barClient: GRPC.IBarService;
+        Execute: (...args: any) => Promise<any>;
+        init: () => void;
+    };
+    bazClientService: {
+        readonly protoService: ProtoService;
+        readonly loggerService: LoggerService;
+        _bazClient: GRPC.IBazService;
+        Execute: (...args: any) => Promise<any>;
+        init: () => void;
+    };
     protoService: ProtoService;
     loggerService: LoggerService;
     errorService: ErrorService;

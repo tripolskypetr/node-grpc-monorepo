@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message BarRequest {
+    string data = 1;
+}
+
+message BarResponse {
+    string data = 1;
+}
+
+service BarService {
+  rpc Execute (BarRequest) returns (BarResponse);
+}

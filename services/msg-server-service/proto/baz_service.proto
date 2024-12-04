@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message BazRequest {
+    string data = 1;
+}
+
+message BazResponse {
+    string data = 1;
+}
+
+service BazService {
+  rpc Execute (BazRequest) returns (BazResponse);
+}

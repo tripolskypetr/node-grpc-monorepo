@@ -8,6 +8,9 @@ import type BazClientService from "./services/client/BazClientService";
 import type FooClientService from "./services/client/FooClientService";
 import ErrorService from "./services/base/ErrorService";
 import type StreamService from "./services/base/StreamService";
+import type { TFooClientService } from "./services/client/FooClientService";
+import type { TBarClientService } from "./services/client/BarClientService";
+import type { TBazClientService } from "./services/client/BazClientService";
 
 const baseServices = {
     protoService: inject<ProtoService>(TYPES.protoService),
@@ -17,9 +20,9 @@ const baseServices = {
 };
 
 const clientServices = {
-    fooClientService: inject<FooClientService>(TYPES.fooClientService),
-    barClientService: inject<BarClientService>(TYPES.barClientService),
-    bazClientService: inject<BazClientService>(TYPES.bazClientService),
+    fooClientService: inject<TFooClientService>(TYPES.fooClientService),
+    barClientService: inject<TBarClientService>(TYPES.barClientService),
+    bazClientService: inject<TBazClientService>(TYPES.bazClientService),
 };
 
 init();

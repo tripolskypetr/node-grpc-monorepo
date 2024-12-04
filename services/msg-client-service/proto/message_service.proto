@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+message IncomingMsg {
+    string serviceName = 1;
+    string clientId = 2;
+    string userId = 3;
+    string requestId = 4;
+    string data = 5;
+}
+
+message OutgoingMsg {
+    string serviceName = 1;
+    string clientId = 2;
+    string userId = 3;
+    string requestId = 4;
+    string data = 5;
+}
+
+service MessageService {
+  rpc connect (stream IncomingMsg) returns (stream OutgoingMsg);
+}

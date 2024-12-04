@@ -183,9 +183,8 @@ export class StreamService {
           originalError = errorData(err);
         })();
       }
-      const call = get(grpcClient, "connect") as grpc.ClientWritableStream<
-        IMessage<string>
-      >;
+      const fn = get(grpcClient, "connect").bind(grpcClient);
+      const call = fn() as grpc.ClientWritableStream<IMessage<string>>;
       call.on("data", (message: IMessage<string>) => {
         this.loggerService.log(
           `remote-grpc streamService makeClient incoming service=${serviceName}`,

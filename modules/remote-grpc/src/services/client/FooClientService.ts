@@ -3,23 +3,34 @@ import { inject } from "../../core/di";
 
 import type ProtoService from "../base/ProtoService";
 import type LoggerService from "../base/LoggerService";
+import { lazy } from "di-lazy";
+import { CC_GRPC_MAP } from "src/config/params";
 
-export class FooClientService implements GRPC.IFooService {
+export const FooClientService = lazy(
+  class implements GRPC.IFooService {
+    readonly protoService = inject<ProtoService>(TYPES.protoService);
+    readonly loggerService = inject<LoggerService>(TYPES.loggerService);
 
-    private readonly protoService = inject<ProtoService>(TYPES.protoService);
-    private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
+    _fooClient: GRPC.IFooService = null as never;
 
-    private _fooClient: GRPC.IFooService = null as never;
-
-    Execute = async (...args: any) => {
-        this.loggerService.log("remote-grpc fooClientService Execute", { args });
-        return await this._fooClient.Execute(...args);
-    };
-
-    protected init = () => {
-        this._fooClient = this.protoService.makeClient<GRPC.IFooService>("FooService")
+    constructor() {
+      console.log("!!!FOO");
+      debugger;
     }
 
-}
+    Execute = async (...args: any) => {
+      this.loggerService.log("remote-grpc fooClientService Execute", { args });
+      return await this._fooClient.Execute(...args);
+    };
+
+    init = () => {
+      this._fooClient =
+        this.protoService.makeClient<GRPC.IFooService>("FooService");
+    };
+  },
+  ...CC_GRPC_MAP["FooService"].methodList
+);
+
+export type TFooClientService = InstanceType<typeof FooClientService>;
 
 export default FooClientService;
