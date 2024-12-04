@@ -4,7 +4,7 @@ import { inject } from "../../core/di";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 
-import { randomString } from 'functools-kit';
+import { errorData, randomString } from 'functools-kit';
 
 import Long from 'long';
 
@@ -153,7 +153,12 @@ export class ProtoService {
     server.addService(get(proto, `${serviceName}.service`) as unknown as grpc.ServiceDefinition, serviceInstance);
     server.bindAsync(grpcHost, grpc.ServerCredentials.createInsecure(), (error) => {
       if (error) {
-        throw new Error(`Failed to serve ${serviceName}, host=${grpcHost}`)
+        throw new class extends Error {
+          constructor() {
+            super(`Failed to serve ${serviceName}, host=${grpcHost}`)
+          }
+          originalError = errorData(error);
+        }
       }
     });
   };
