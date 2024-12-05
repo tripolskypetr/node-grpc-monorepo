@@ -1,10 +1,10 @@
-timport { join, resolve } from "path";
+import { join, resolve } from "path";
 import { inject } from "../../core/di";
 
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 
-import { errorData, randomString } from 'functools-kit';
+import { errorData, randomString, BehaviorSubject, waitForNext } from 'functools-kit';
 
 import Long from 'long';
 
@@ -96,6 +96,8 @@ export class ProtoService {
     const Ctor = get(proto, serviceName) as unknown as Ctor;
     const grpcClient = new Ctor(grpcHost, grpc.credentials.createInsecure());
 
+    const readySubject = new BehaviorSubject(false);
+
     grpcClient.waitForReady(Date.now() + GRPC_READY_DELAY, (err: Error) => {
       if (err) {
         this.loggerService.log(`remote-grpc protoService failed to connect to ${serviceName} due to timeout`);
@@ -106,18 +108,25 @@ export class ProtoService {
           originalError = errorData(err);
         }
       }
+      readySubject.next(true);
     });
   
     return methodList.reduce<T>(
       (acm, cur) => {
         const grpcMethod = promisifyMethod(get(grpcClient, cur).bind(grpcClient));
+        const wrappedMethod = async (request: Record<string, unknown>) => {
+          if (!readySubject.data) {
+            await waitForNext(readySubject, (value) => value);
+          }
+          return await grpcMethod(request);
+        };
         return {
           ...acm,
           [cur]: async (request: Record<string, unknown>) => {
             const executionId = randomString();
             try {
               this.loggerService.log(`remote-grpc protoService makeClient calling service=${serviceName} method=${cur} executionId=${executionId}`, { request, });
-              const result = await grpcMethod(processObject(request));
+              const result = await wrappedMethod(processObject(request));
               this.loggerService.log(`remote-grpc protoService makeClient succeed service=${serviceName} method=${cur} executionId=${executionId}`, { request, result });
               return processObject(result || {});
             } catch (error) {
